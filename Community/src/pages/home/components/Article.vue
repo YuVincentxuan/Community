@@ -283,7 +283,7 @@ export default {
             border-bottom: 1px solid rgba(178,186,194,.15);
             .header-icon
                 padding-right 10px
-                color #0106ff
+                color #409EFF
         .rt-box-body
             .el-collapse-item
                 padding 0
@@ -303,4 +303,5 @@ export default {
                 padding 20px
                 .tag-list-item
                     margin 2px 0
+
 </style>

@@ -1,22 +1,10 @@
 <template>
     <div>
-<el-menu default-active="1-4-1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="_isCollapse">
+<el-menu :default-active="activeIndex" class="el-menu-vertical-demo" router @open="handleOpen" @close="handleClose" :collapse="_isCollapse">
 
-<el-menu-item index="1">
-    <i class="el-icon-menu"></i>
-    <span slot="title">我的信息</span>
-  </el-menu-item>
-  <el-menu-item index="2">
-    <i class="el-icon-location"></i>
-    <span slot="title">博客管理</span>
-  </el-menu-item>
-  <el-menu-item index="3">
-    <i class="el-icon-document"></i>
-    <span slot="title">认证管理</span>
-  </el-menu-item>
-  <el-menu-item index="4">
-    <i class="el-icon-setting"></i>
-    <span slot="title">消息通知</span>
+<el-menu-item v-for="(item,i) in navList" :key="i" :index="item.navItem">
+    <i :class="item.navIcon"></i>
+    <span slot="title">{{item.navName}}</span>
   </el-menu-item>
 </el-menu>
     </div>
@@ -26,7 +14,30 @@ export default {
     name:'CenterHeader',
      data() {
       return {
-        isCollapse: true
+        isCollapse: true,
+        activeIndex:'1',
+        navList:[
+          {
+            navName:'我的信息',
+            navItem:'/center',
+            navIcon:'el-icon-location'
+          },
+          {
+            navName:'博客管理',
+            navItem:'/blog',
+            navIcon:'el-icon-location'
+          },
+          {
+            navName:'认证管理',
+            navItem:'/certificate',
+            navIcon:'el-icon-document'
+          },
+          {
+            navName:'消息通知',
+            navItem:'/message',
+            navIcon:'el-icon-setting'
+          },
+        ]
       };
     },
     methods: {
