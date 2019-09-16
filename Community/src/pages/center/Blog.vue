@@ -6,7 +6,7 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-                    
+                    <center-tab></center-tab>
                 </el-col>
             </el-row>
         </div>

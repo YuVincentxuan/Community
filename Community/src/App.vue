@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style>
-  body {
+body {
     margin: 0;
     padding: 0;
     color: rgb(151, 151, 151);
@@ -47,4 +47,37 @@ a{
 .el-collapse-item__header.is-active{
   font-weight: bold
 }
+.el-tabs__nav-scroll{
+  position: relative;
+}
+.el-tabs__nav.is-top{
+  position: relative;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+.el-tabs__header{
+  margin:0
+}
+.el-tabs__active-bar{
+  display: none;
+}
+.el-tabs__item.is-active {
+    color:#fff;
+    border-radius: 5px; 
+    background-color: #409EFF;
+    transform: translateX(0px)
+}
+.el-tabs__item{
+  text-align: center;
+  width :70px;
+  padding: 0;
+  margin: 5px
+}
+
+
 </style>

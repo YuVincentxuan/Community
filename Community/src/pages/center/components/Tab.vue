@@ -61,7 +61,7 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
                     <div class="my-follow">
                         <div class="my-follow-header">
-                            <h4>我的关注</h4>
+                            <h4>我的粉丝</h4>
                             <span>14</span>
                         </div>
                         <ul class="people-list">

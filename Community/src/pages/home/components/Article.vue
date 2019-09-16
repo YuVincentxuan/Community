@@ -35,12 +35,12 @@
                         :key="item.title"
                     >
                         <div>
-                            <a href="">
+                            <router-link to="/user">
                                 <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
-                            </a>
-                            <a href="">
+                            </router-link>
+                            <router-link to="/article">
                                 <span class="title">{{item.title}}</span>
-                            </a>
+                            </router-link>
                         </div>
                         <div class="card-text">
                             <a  
@@ -62,6 +62,11 @@
                         </div>
                     </li>
                 </ul>
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="100">
+                </el-pagination>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
                 <div class="rt-box hot-tag">
@@ -94,9 +99,9 @@
                                 v-for="(author,index) in authorList"
                                 :key="index"
                                 :title="(index+1) +'.'+author.name" :name="index">
-                                <a :href="author.url">
+                                <router-link to="/user">
                                     <el-avatar class="header-img" :size="50" :src="author.headerImg"></el-avatar>
-                                </a>
+                                 </router-link>
                                 <div class="author-des">
                                     <span>文章：{{author.articlesNum}}</span>
                                     <span>粉丝：{{author.fansNum}}</span>
@@ -274,6 +279,9 @@ export default {
                     margin 0 5px
                 .sm-tag
                     font-size 14px
+    .el-pagination
+        margin 10px 0 
+        text-align center
     .rt-box
         margin-bottom 10px
         background-color white

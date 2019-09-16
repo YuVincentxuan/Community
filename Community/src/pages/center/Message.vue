@@ -34,10 +34,6 @@ export default {
         @media screen and (max-width: 1200px) {
             width: 100%;
         }
-        .bg-center
-            width 100%
-            height 100px
-            background-color #0106ff
 @media screen and (max-width: 1200px) {
     .content{
         top 60px

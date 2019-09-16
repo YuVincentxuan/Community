@@ -5,6 +5,8 @@ import Center from '../pages/center/Center'
 import Blog from '../pages/center/Blog'
 import Certificate from '../pages/center/Certificate'
 import Message from '../pages/center/Message'
+import User from '../pages/user/User'
+import Article from '../pages/article/article'
 Vue.use(Router)
 
 export default new Router({
@@ -33,6 +35,16 @@ export default new Router({
       path:'/message',
       name:'Message',
       component:Message
+    },
+    {
+      path:'/user',
+      name:'User',
+      component:User
+    },
+    {
+      path:'/article',
+      name:'Article',
+      component:Article
     }
   ]
 })
