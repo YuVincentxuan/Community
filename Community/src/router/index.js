@@ -6,7 +6,8 @@ import Blog from '../pages/center/Blog'
 import Certificate from '../pages/center/Certificate'
 import Message from '../pages/center/Message'
 import User from '../pages/user/User'
-import Article from '../pages/article/article'
+import Article from '../pages/article/Article'
+import Write from '../pages/write/Write'
 Vue.use(Router)
 
 export default new Router({
@@ -45,6 +46,11 @@ export default new Router({
       path:'/article',
       name:'Article',
       component:Article
+    },
+    {
+      path:'/write',
+      name:'Write',
+      component:Write
     }
   ]
 })

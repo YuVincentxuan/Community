@@ -6,7 +6,9 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-                    
+                    <div class="certificate">
+                        132
+                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -38,6 +40,9 @@ export default {
             width 100%
             height 100px
             background-color #0106ff
+        .certificate
+            background #fff
+
 @media screen and (max-width: 1200px) {
     .content{
         top 60px

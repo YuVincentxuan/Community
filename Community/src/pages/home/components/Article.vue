@@ -54,12 +54,12 @@
                                     {{ tag.label }}
                                 </el-tag>
                             </a>
-                   
                             <span class="sm-tag">阅读 {{item.read}}</span>
                             <span class="sm-tag">评论 {{item.comment}}</span>
                             <span class="sm-tag">喜欢 {{item.like}}</span>
                             <span class="sm-tag">{{item.time}}</span>
                         </div>
+
                     </li>
                 </ul>
                 <el-pagination
@@ -311,5 +311,9 @@ export default {
                 padding 20px
                 .tag-list-item
                     margin 2px 0
-
+@media screen and (max-width: 1200px) {
+    .container >>> .el-pager li{
+        margin 0 !important
+    }
+}
 </style>

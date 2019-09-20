@@ -6,7 +6,49 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-                    <center-tab></center-tab>
+                    <ul class="article">
+                        <li 
+                            class="article-item"
+                            v-for="item in articles"
+                            :key="item.title"
+                        >
+                        <div>
+                            <router-link to="/user">
+                                <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
+                            </router-link>
+                            <router-link to="/article">
+                                <span class="title">{{item.title}}</span>
+                            </router-link>
+                        </div>
+                        <div class="card-text">
+                            <a  
+                                v-for="tag in item.items"
+                                :key="tag.label">
+                                <el-tag
+                                    class="article-tag"
+                                   
+                                    type="danger"
+                                    effect="dark">
+                                    {{ tag.label }}
+                                </el-tag>
+                            </a>
+                   
+                            <span class="sm-tag">阅读 {{item.read}}</span>
+                            <span class="sm-tag">评论 {{item.comment}}</span>
+                            <span class="sm-tag">喜欢 {{item.like}}</span>
+                            <span class="sm-tag">{{item.time}}</span>
+                        </div>
+                        <div class="btn-box">
+                            <el-button type="info" size="mini" plain>编辑</el-button>
+                            <el-button type="danger" size="mini" @click="deleteRow(i)" plain>删除</el-button>
+                        </div>
+                    </li>
+                </ul>
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :total="100">
+                </el-pagination>
                 </el-col>
             </el-row>
         </div>
@@ -14,13 +56,118 @@
 </template>
 <script>
 import CenterHeader from './components/CenterHeader'
-import CenterTab from './components/Tab'
 export default {
     name:'Blog',
     components:{
-        CenterHeader,
-        CenterTab
-    }    
+        CenterHeader
+    },
+     data(){
+        return{
+            searchInput:'',
+            activeName:0,
+            articles:[
+                {
+                    title:'这是我的第一篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:20,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                },
+                {
+                    title:'这是我的第二篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:30,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                },
+                   {
+                    title:'这是我的第三篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:30,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                },
+                {
+                    title:'这是我的第四篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:30,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                },
+                {
+                    title:'这是我的第五篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:30,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                },
+                {
+                    title:'这是我的第六篇文章',
+                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    read:10,
+                    comment:30,
+                    like:5,
+                    time:'12小时前',
+                    items:[
+                        {label:'前端'},
+                        {label:'后端'},
+                        {label:'安卓'},
+                    ]
+                }
+            ],
+            authorList:[
+                {
+                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    name:'Lana Del Rey',
+                    url:'/',
+                    articlesNum:10,
+                    fansNum:100
+                },
+                {
+                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                    name:'Taylor Swift',
+                    url:'/',
+                    articlesNum:10,
+                    fansNum:100
+                }
+            ]
+        }
+    },
+    methods: {
+        deleteRow(index) {
+            this.articles.splice(index, 1);
+        }
+    }
 }
 </script>
 <style lang="stylus" scoped>
@@ -38,6 +185,41 @@ export default {
             width 100%
             height 100px
             background-color #0106ff
+        .article
+            width 100%
+            margin 0
+            background-color rgb(240, 240, 240)
+        .article-item
+            margin 0 auto
+            padding 20px
+            background-color white
+            border-bottom: 1px solid rgba(178,186,194,.15);
+            .header-img
+            .title
+                display inline-block
+                height 50px
+                line-height 50px
+                vertical-align middle
+                color black
+                font-size 20px
+                @media screen and (max-width: 1200px) {
+                    font-size 16px
+                }
+            .card-text
+                margin-top 5px 
+                .article-tag
+                    height 20px
+                    line-height 20px
+                    margin 0 5px
+                .sm-tag
+                    font-size 14px
+            .btn-box
+                position relative
+                float right
+                top -50px
+    .el-pagination
+        margin 10px 0 
+        text-align center
 @media screen and (max-width: 1200px) {
     .content{
         top 60px
@@ -45,6 +227,9 @@ export default {
     .center-nav {
         padding-left 0 !important
         padding-right 0 !important
+    }
+    .content >>> .el-pager li{
+        margin 0 !important
     }
 }
 </style>
