@@ -8,6 +8,7 @@ import Message from '../pages/center/Message'
 import User from '../pages/user/User'
 import Article from '../pages/article/Article'
 import Write from '../pages/write/Write'
+import Login from '../pages/log/Log'
 Vue.use(Router)
 
 export default new Router({
@@ -51,6 +52,11 @@ export default new Router({
       path:'/write',
       name:'Write',
       component:Write
+    },
+    {
+      path:'/login',
+      name:'Login',
+      component:Login
     }
   ]
 })

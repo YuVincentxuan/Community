@@ -6,6 +6,10 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
+                <div class="blog">
+                    <div class="blog-title">
+                        <h4>我的博客</h4>
+                    </div>
                     <ul class="article">
                         <li 
                             class="article-item"
@@ -42,13 +46,14 @@
                             <el-button type="info" size="mini" plain>编辑</el-button>
                             <el-button type="danger" size="mini" @click="deleteRow(i)" plain>删除</el-button>
                         </div>
-                    </li>
-                </ul>
+                        </li>
+                     </ul>
                 <el-pagination
                     background
                     layout="prev, pager, next"
                     :total="100">
                 </el-pagination>
+                </div>
                 </el-col>
             </el-row>
         </div>
@@ -165,7 +170,22 @@ export default {
     },
     methods: {
         deleteRow(index) {
-            this.articles.splice(index, 1);
+            this.$confirm('此操作将永久删除该博客, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.articles.splice(index, 1);
+                this.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                });
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });          
+            });
         }
     }
 }
@@ -185,6 +205,27 @@ export default {
             width 100%
             height 100px
             background-color #0106ff
+    .blog
+        background #fff
+        padding 10px
+        .blog-title
+                padding-bottom 10px
+                border-bottom 1px solid #409EFF
+                >h4
+                    display inline-block
+                    margin-block-start 0
+                    margin-block-end 0 
+                    border-left 3px solid #7097c9
+                    padding-left 5px 
+                    color #000
+                >span 
+                    display inline-block
+                    font-size 12px
+                    width 60%
+                    white-space nowrap
+                    text-overflow ellipsis 
+                    overflow hidden
+                    vertical-align bottom
         .article
             width 100%
             margin 0
