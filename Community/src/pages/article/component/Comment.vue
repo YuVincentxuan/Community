@@ -27,7 +27,7 @@
             </div>
             <div class="icon-btn">
                 <span @click="showReplyInput(i,item.name,item.id)"><i class="iconfont el-icon-s-comment"></i>{{item.commentNum}}</span>
-                <i class="iconfont el-icon-caret-top"></i>{{item.like}}
+                <span @click="addLike(i)"><i class="iconfont el-icon-caret-top" :class="{'redLike':item.likeTag}"></i>{{item.like}}</span>
             </div>
             <div class="talk-box">
                 <p>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="icon-btn">
                         <span @click="showReplyInput(i,reply.from,reply.id)"><i class="iconfont el-icon-s-comment"></i>{{reply.commentNum}}</span>
-                        <i class="iconfont el-icon-caret-top"></i>{{reply.like}}
+                        <span @click="addreplyLike(i,j)"><i class="iconfont el-icon-caret-top" :class="{'redLike':reply.likeTag}"></i>{{reply.like}}</span>
                     </div>
                     <div class="talk-box">
                         <p>
@@ -116,6 +116,7 @@ export default {
                     commentNum:2,
                     like:15,
                     inputShow:false,
+                    likeTag:true,
                     reply:[
                         {
                             from:'Taylor Swift',
@@ -127,7 +128,8 @@ export default {
                             time:'2019年9月16日 18:43',
                             commentNum:1,
                             like:15,
-                            inputShow:false
+                            inputShow:false,
+                            likeTag:true,
                         },
                         {
                             from:'Ariana Grande',
@@ -139,7 +141,8 @@ export default {
                             time:'2019年9月16日 18:43',
                             commentNum:0,
                             like:5,
-                            inputShow:false
+                            inputShow:false,
+                            likeTag:true
 
                         }
                     ]
@@ -153,6 +156,7 @@ export default {
                     commentNum:1,
                     like:5,
                     inputShow:false,
+                    likeTag:true,
                     reply:[
                         {
                             from:'Lana Del Rey',
@@ -164,8 +168,8 @@ export default {
                             time:'2019年9月16日 18:43',
                             commentNum:25,
                             like:5,
-                            inputShow:false
-
+                            inputShow:false,
+                            likeTag:true
                         }
                     ]
                 },
@@ -178,6 +182,7 @@ export default {
                     commentNum:0,
                     like:5,
                     inputShow:false,
+                    likeTag:true,
                     reply:[]
                 },
             ]
@@ -285,6 +290,24 @@ export default {
                 var date= new Date(parseInt(date));
                 return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
             }
+        },
+        addLike(i,j){
+            if(this.comments[i].likeTag){
+                this.comments[i].like -=1
+                this.comments[i].likeTag = false
+            }else{
+                this.comments[i].like +=1      
+                this.comments[i].likeTag = true              
+            }
+        },
+        addreplyLike(i,j){
+            if(this.comments[i].reply[j].likeTag){
+                this.comments[i].reply[j].like -=1
+                this.comments[i].reply[j].likeTag = false
+            }else{
+                this.comments[i].reply[j].like +=1      
+                this.comments[i].reply[j].likeTag = true              
+            }
         }
     },    
 }
@@ -367,6 +390,8 @@ export default {
             cursor pointer
         .iconfont 
             margin 0 5px
+        .redLike
+            color red
     .talk-box
         margin 0 50px
         >p
