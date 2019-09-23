@@ -16,44 +16,47 @@
                             v-for="item in articles"
                             :key="item.title"
                         >
-                        <div>
-                            <router-link to="/user">
-                                <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
-                            </router-link>
-                            <router-link to="/article">
-                                <span class="title">{{item.title}}</span>
-                            </router-link>
-                        </div>
-                        <div class="card-text">
-                            <a  
-                                v-for="tag in item.items"
-                                :key="tag.label">
-                                <el-tag
-                                    class="article-tag"
-                                   
-                                    type="danger"
-                                    effect="dark">
-                                    {{ tag.label }}
-                                </el-tag>
-                            </a>
-                   
-                            <span class="sm-tag">阅读 {{item.read}}</span>
-                            <span class="sm-tag">评论 {{item.comment}}</span>
-                            <span class="sm-tag">喜欢 {{item.like}}</span>
-                            <span class="sm-tag">{{item.time}}</span>
-                        </div>
-                        <div class="btn-box">
-                            <el-button type="info" size="mini" plain>编辑</el-button>
-                            <el-button type="danger" size="mini" @click="deleteRow(i)" plain>删除</el-button>
-                        </div>
+                            <div>
+                                <router-link to="/user">
+                                    <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
+                                </router-link>
+                                <div class="author-info">
+                                    <router-link to="/article">
+                                        <span class="title">{{item.title}}</span>
+                                    </router-link>
+                                    <span class="author-time">
+                                        <a  
+                                        v-for="tag in item.items"
+                                        :key="tag.label">
+                                            <el-tag
+                                                class="article-tag"
+                                            
+                                                type="danger"
+                                                effect="dark">
+                                                {{ tag.label }}
+                                            </el-tag>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-text">
+                                <span class="sm-tag">阅读 {{item.read}}</span>
+                                <span class="sm-tag">评论 {{item.comment}}</span>
+                                <span class="sm-tag">喜欢 {{item.like}}</span>
+                                <span class="sm-tag">{{item.time}}</span>
+                            </div>
+                            <div class="btn-box">
+                                <el-button type="info" size="mini" plain>编辑</el-button>
+                                <el-button type="danger" size="mini" @click="deleteRow(i)" plain>删除</el-button>
+                            </div>
                         </li>
-                     </ul>
-                <el-pagination
-                    background
-                    layout="prev, pager, next"
-                    :total="100">
-                </el-pagination>
-                </div>
+                    </ul>
+                    <el-pagination
+                        background
+                        layout="prev, pager, next"
+                        :total="100">
+                    </el-pagination>
+                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -238,9 +241,7 @@ export default {
             .header-img
             .title
                 display inline-block
-                height 50px
-                line-height 50px
-                vertical-align middle
+                vertical-align top
                 color black
                 font-size 20px
                 @media screen and (max-width: 1200px) {
@@ -248,16 +249,35 @@ export default {
                 }
             .card-text
                 margin-top 5px 
-                .article-tag
-                    height 20px
-                    line-height 20px
-                    margin 0 5px
                 .sm-tag
                     font-size 14px
             .btn-box
                 position relative
                 float right
                 top -50px
+        .author-info
+            display inline-block
+            margin-left 5px
+            width 60%
+            height 50px
+            line-height 25px
+            >span 
+                display block
+                cursor pointer
+                overflow hidden
+                white-space nowrap
+                text-overflow ellipsis
+            .author-name
+                color #000
+                font-size 18px
+                font-weight bold
+            .author-time
+                font-size 14px
+            .article-tag
+                height 20px
+                line-height 20px
+                margin 0 10px 0 0 
+
     .el-pagination
         margin 10px 0 
         text-align center

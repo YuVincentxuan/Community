@@ -8,7 +8,7 @@ import Message from '../pages/center/Message'
 import User from '../pages/user/User'
 import Article from '../pages/article/Article'
 import Write from '../pages/write/Write'
-import Login from '../pages/log/Log'
+import Login from '../pages/login/Login'
 Vue.use(Router)
 
 export default new Router({
