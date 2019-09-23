@@ -11,24 +11,25 @@
                             <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                            <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
                             <el-button @click="resetForm('ruleForm')">重置</el-button>
                         </el-form-item>
                         </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="注册">
                     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                    <el-form-item label="密码" prop="pass">
+                    <el-form-item label="手机号" prop="pass">
                         <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
                     </el-form-item>
-                    <el-form-item label="确认密码" prop="checkPass">
+                    <el-form-item label="密码" prop="checkPass">
                         <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄" prop="age">
-                        <el-input v-model.number="ruleForm.age"></el-input>
+                    <el-form-item label="验证码" prop="age">
+                        <el-input class="telInput" v-model.number="ruleForm.age"></el-input>
+                        <el-button class="sendCode" type="primary" size="medium">发送验证码</el-button>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                        <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
                         <el-button @click="resetForm('ruleForm')">重置</el-button>
                     </el-form-item>
                     </el-form>
@@ -41,7 +42,6 @@
 export default {
     name:'Login',
     data() {
-
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'));
@@ -108,9 +108,15 @@ export default {
             top 0
             bottom 0
             margin auto
+            .telInput
+              width 50%
+            .sendCode
+              margin-left 20px
         .container >>>  .el-tabs__nav.is-top 
-                width auto 
+              width auto 
         .container >>> .el-tabs__item
-                margin 0
-                width 90px
+          margin 0
+          width 90px
+        .container >>> .el-tabs__item.is-active
+          border-radius 0
 </style>

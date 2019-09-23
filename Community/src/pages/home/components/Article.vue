@@ -65,11 +65,9 @@
                         </div>
                     </li>
                 </ul>
-                <el-pagination
-                    background
-                    layout="prev, pager, next"
-                    :total="100">
-                </el-pagination>
+                <div class="more">
+                    <el-button type="primary" class="clickMore">点击加载更多</el-button>
+                </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
                 <div class="rt-box hot-tag">
@@ -298,7 +296,7 @@ export default {
                 height 20px
                 line-height 20px
                 margin 0 10px 0 0 
-    .el-pagination
+    .more
         margin 10px 0 
         text-align center
     .rt-box

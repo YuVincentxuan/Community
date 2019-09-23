@@ -16,21 +16,20 @@
                             <span>未认证 已认证</span>
                             <el-button type="danger" v-show="showBtn" @click="showCetificateInput " size="mini" class="certificate-btn" plain>立即认证</el-button>
                         </div>
-                        <div v-show="showInput">
+                        <div class="certificateForm" v-show="showInput">
                             <div style="margin: 20px;"></div>
                                 <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-                                <el-form-item label="名称">
-                                    <el-input v-model="formLabelAlign.name"></el-input>
-                                </el-form-item>
-                                <el-form-item label="活动区域">
-                                    <el-input v-model="formLabelAlign.region"></el-input>
-                                </el-form-item>
-                                <el-form-item label="活动形式">
-                                    <el-input v-model="formLabelAlign.type"></el-input>
-                                </el-form-item>
-                                </el-form>
+                                    <el-form-item label="姓名">
+                                        <el-input v-model="formLabelAlign.name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="学号">
+                                        <el-input v-model="formLabelAlign.region"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="申请原因">
+                                        <el-input type="textarea" v-model="formLabelAlign.desc"></el-input>
+                                    </el-form-item>
+                                    </el-form>
                             <el-button type="danger"  v-show="showInput" @click="showCetificateBtn " size="mini" class="certificate-btn" plain>立即提交</el-button>
-
                         </div>
                     </div>
                 </el-col>
@@ -55,7 +54,7 @@ export default {
         formLabelAlign: {
           name: '',
           region: '',
-          type: ''
+          desc: ''
         }
       };
     },
@@ -124,6 +123,14 @@ export default {
                     position relative
                     float right
                     top -5px
+            .certificateForm
+                position relative
+                width 50%
+                left 0
+                right 0
+                top 0
+                bottom 0
+                margin 0 auto 
 @media screen and (max-width: 1200px) {
     .content{
         top 60px

@@ -65,7 +65,7 @@ export default {
         defaultData: "preview",
         title:'',
         dialogTableVisible:false,
-        dialogFormVisible: true,
+        dialogFormVisible: false,
         form: {
           name: '',
           type: '',
