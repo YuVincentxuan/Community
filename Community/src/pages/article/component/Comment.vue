@@ -19,15 +19,15 @@
                 <el-button class="reply-btn" size="medium" @click="sendComment" type="primary">发表评论</el-button>
             </div>
         </div>
-        <div v-for="(item,i) in comments" :key="i" class="author-title reply-father">
-            <el-avatar class="header-img" :size="40" :src="item.headImg"></el-avatar>
+        <div v-for="(item,i) in list" :key="item.self_id" class="author-title reply-father">
+            <el-avatar class="header-img" :size="40" :src="item.commentImg"></el-avatar>
             <div class="author-info">
-                <span class="author-name">{{item.name}}</span>
-                <span class="author-time">{{item.time}}</span>
+                <span class="author-name">{{item.plName}}</span>
+                <span class="author-time">{{this.dateStr(item.date)}}</span>
             </div>
             <div class="icon-btn">
-                <span @click="showReplyInput(i,item.name,item.id)"><i class="iconfont el-icon-s-comment"></i>{{item.commentNum}}</span>
-                <span @click="addLike(i)"><i class="iconfont el-icon-caret-top" :class="{'redLike':item.likeTag}"></i>{{item.like}}</span>
+                <span @click="showReplyInput(i,item.name,item.id)"><i class="iconfont el-icon-s-comment"></i>{{item.reply.length}}</span>
+                <span @click="addLike(i)"><i class="iconfont el-icon-caret-top" :class="{'redLike':item.likeTag}"></i>{{item.zNumber}}</span>
             </div>
             <div class="talk-box">
                 <p>
@@ -35,20 +35,20 @@
                 </p>
             </div>
             <div class="reply-box">
-                <div v-for="(reply,j) in item.reply" :key="j" class="author-title">
+                <div v-for="(reply,j) in item.reply" :key="reply.self_id" class="author-title">
                     <el-avatar class="header-img" :size="40" :src="reply.fromHeadImg"></el-avatar>
                     <div class="author-info">
-                        <span class="author-name">{{reply.from}}</span>
-                        <span class="author-time">{{reply.createTime}}</span>
+                        <span class="author-name">{{reply.plName}}</span>
+                        <span class="author-time">{{this.dateStr(reply.date)}}</span>
                     </div>
                     <div class="icon-btn">
                         <span @click="showReplyInput(i,reply.from,reply.id)"><i class="iconfont el-icon-s-comment"></i>{{reply.commentNum}}</span>
-                        <span @click="addreplyLike(i,j)"><i class="iconfont el-icon-caret-top" :class="{'redLike':reply.likeTag}"></i>{{reply.like}}</span>
+                        <span @click="addreplyLike(i,j)"><i class="iconfont el-icon-caret-top" :class="{'redLike':reply.likeTag}"></i>{{reply.zNumber}}</span>
                     </div>
                     <div class="talk-box">
                         <p>
-                            <span>回复 {{reply.to}}:</span>
-                            <span class="reply">{{reply.comment}}</span>
+                            <span>回复 {{reply.atName}}:</span>
+                            <span class="reply">{{reply.plContent}}</span>
                         </p>
                     </div>
                     <div class="reply-box">
@@ -96,6 +96,9 @@ const clickoutside = {
 };
 export default {
     name:'ArticleComment',
+    props:{
+        list:Array
+    },
     data(){
         return{
             btnShow: false,
@@ -143,7 +146,6 @@ export default {
                             like:5,
                             inputShow:false,
                             likeTag:true
-
                         }
                     ]
                 },

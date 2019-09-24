@@ -4,7 +4,7 @@
             <div>
                 <el-row :gutter="10">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="center-nav">
-                        <div class="center-bg">
+                        <div class="center-bg" :style="styles">
                             <div class="my-header-img">
                                 <el-avatar class="header-img" :size="100" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                             </div>
@@ -118,6 +118,9 @@ export default {
     data(){
         return{
             activeName:'first',
+            styles:{
+                backgroundImage:'url(https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg)'
+            },
             articles:[
                 {
                     title:'这是我的第一篇文章',
@@ -231,7 +234,6 @@ export default {
         height 150px
         width 100%
         background-color white
-        background-image url('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
         background-repeat no-repeat
         background-size cover
         background-position center center

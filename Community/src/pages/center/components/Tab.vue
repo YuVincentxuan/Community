@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="center-bg">
+        <div class="center-bg" :style="styles">
             <div class="my-header-img">
                 <el-avatar class="header-img" :size="100" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
                 <span class="my-name">{{userName}}</span>
@@ -128,7 +128,11 @@ export default {
             userBirth:'1999-06-08',
             userHobby:'代码 coding',
             userJob:'前端',
-            userEmail:'yuwxuan@qq.com'
+            userEmail:'yuwxuan@qq.com',
+            bgImg:'https://ae01.alicdn.com/kf/Hdd856ae4c81545d2b51fa0c209f7aa28Z.jpg',
+            styles:{
+                backgroundImage:'url(https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg)'
+            }
         }
     },
     methods:{
@@ -144,7 +148,10 @@ export default {
               return 'medium'
           }
         }
-    }
+    },
+    mounted() {
+      this.styles.backgroundImage = 'url('+this.bgImg+')'
+    },
 }
 </script>
 <style lang="stylus" scoped>
@@ -153,7 +160,6 @@ export default {
         height 100px
         width 100%
         background-color white
-        background-image url('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
         background-repeat no-repeat
         background-size cover
         background-position center center

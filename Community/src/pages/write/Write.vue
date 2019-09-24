@@ -2,9 +2,9 @@
     <div class="content">
         <div class="title-box">
             <el-input class="title-input" placeholder="请输入标题" v-model="title"></el-input>
-            <el-button type="danger" size="medium" @click="postArticle " class="title-btn" plain>发表博客</el-button>
+            <el-button type="danger" size="medium"  @click="postArticle " class="title-btn" plain>发表博客</el-button>
         </div>
-        <mavon-editor v-model="value" ></mavon-editor>
+        <mavon-editor v-model="value" @change="change"></mavon-editor>
         <el-dialog title="发表博客" :visible.sync="dialogFormVisible">
             <el-form  :model="form">
                 <el-form-item label="文章标签：" :label-width="formLabelWidth">
@@ -47,7 +47,7 @@
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button @click="dialogFormVisible = false">保存为草稿</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                <el-button type="primary" @click="dialogFormVisible = false, publishBlog">确 定</el-button>
             </div>
         </el-dialog>
    
@@ -64,6 +64,7 @@ export default {
         value: '',
         defaultData: "preview",
         title:'',
+        html:'',
         dialogTableVisible:false,
         dialogFormVisible: false,
         form: {
@@ -71,7 +72,6 @@ export default {
           type: '',
           direction:'',
           delivery: false,
-          type: [],
           resource: '',
           desc: ''
         },
@@ -102,7 +102,10 @@ export default {
           this.$refs.saveTagInput.$refs.input.focus();
         });
       },
-
+        change(value, render){
+            // render 为 markdown 解析后的结果
+            this.html = render;
+        },
       handleInputConfirm() {
         let inputValue = this.inputValue;
         if (inputValue) {
@@ -110,6 +113,20 @@ export default {
         }
         this.inputVisible = false;
         this.inputValue = '';
+      },
+      publishBlog(){
+          let params = new URLSearchParams();
+          params.append('title',this.title)
+          params.append('content',this.value)
+          params.append('contentHtml',this.html)
+          params.append('directionLabel',this.form.direction)
+          params.append('type',this.form.type)
+          params.append('attribute',this.dynamicTags)
+          axios.post('/publishBlog',params)
+          .then(this.publishBlogSucc)
+      },
+      publishBlogSucc(res){
+          res = res.data
       }
     },
     computed:{
