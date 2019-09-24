@@ -81,7 +81,7 @@
                     </li>
                 </ul>
                 <div class="more">
-                    <el-button type="primary" class="clickMore">点击加载更多</el-button>
+                    <el-button type="primary" class="clickMore" @click="morePage">点击加载更多</el-button>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
@@ -115,8 +115,8 @@
                                 v-for="(author,index) in authorList"
                                 :key="index"
                                 :title="(index+1) +'.'+author.name" :name="index">
-                                <router-link to="/user">
-                                    <el-avatar class="header-img" :size="50" :src="author.headerImg"></el-avatar>
+                                <router-link :to="author.homePageUrl">
+                                    <el-avatar class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
                                  </router-link>
                                 <div class="author-des">
                                     <span>文章：{{author.articlesNum}}</span>
@@ -145,6 +145,7 @@ export default {
             PageNum:1,
             rows:10,
             articles:[],
+            authorList:[]
             // articles:[
             //     {
             //         title:'这是我的第一篇文章',
@@ -225,30 +226,30 @@ export default {
             //         ]
             //     }
             // ],
-            authorList:[
-                {
-                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    name:'Lana Del Rey',
-                    url:'/',
-                    articlesNum:10,
-                    fansNum:100
-                },
-                {
-                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    name:'Taylor Swift',
-                    url:'/',
-                    articlesNum:10,
-                    fansNum:100
-                }
-            ]
+            // authorList:[
+            //     {
+            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         name:'Lana Del Rey',
+            //         url:'/',
+            //         articlesNum:10,
+            //         fansNum:100
+            //     },
+            //     {
+            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         name:'Taylor Swift',
+            //         url:'/',
+            //         articlesNum:10,
+            //         fansNum:100
+            //     }
+            // ]
         }
     },
     methods:{
         getListArticles(){
-            // let params = new URLSearchParams();
-            // params.append('pageNum',this.pageNum)
-            // params.append('rows', this.rows)
-            axios.post('https://www.easy-mock.com/mock/5d88be85b2e0b6264fe76d76/getListArticles')
+            let params = new URLSearchParams();
+            params.append('pageNum',this.pageNum)
+            params.append('rows', this.rows)
+            axios.post('https://www.easy-mock.com/mock/5d88be85b2e0b6264fe76d76/getListArticles',params)
             .then(this.getListArticlesSucc)
         },
         getListArticlesSucc(res){
@@ -257,10 +258,25 @@ export default {
             if(res.code = 200){
                 this.articles = res.data
             }
+        },
+        getAllAuthors(){
+            axios.post('/getAllAuthors')
+            .then(this.getAllAuthorsSucc)
+        },
+        getAllAuthorsSucc(res){
+            res = res.data
+            if(res.code = 200){
+                this.authorList = res.url
+            }
+        },
+        morePage(){
+            this.pageNum += 1
+            this.getListArticles()
         }
     },
     mounted(){
         this.getListArticles()
+        this.getAllAuthors()
     }
 }
 </script>
