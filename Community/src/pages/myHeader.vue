@@ -9,7 +9,7 @@
             </el-col>
             <el-col :xs="13" :sm="20" :md="20" :lg="20" class="offcanvas-collapse">
                 <el-col :xs="18" :sm="18" :md="15" :lg="18">
-                    <el-menu :default-active="activeIndex" class="el-menu-demo" router mode="horizontal">
+                    <el-menu :default-active="this.$router.path" class="el-menu-demo" router mode="horizontal">
                         <el-menu-item v-for="(item,i) in navList" :key="i" :index="item.name">
                             {{item.navItem}}
                         </el-menu-item>
@@ -24,10 +24,10 @@
                     <div class="lo-re-box">
                         <router-link to="/login" v-if="true">登录</router-link>
                         <div class="isLogin" v-else>
-                            <img src="this.$store.state.user.img" >
+                            <img :src="this.$store.state.myHeaderImg" >
                             <el-dropdown trigger="click">
                                 <span class="el-dropdown-link">
-                                    <span class="username">{{  }}</span> <i class="el-icon-arrow-down el-icon--right"></i>
+                                    <span class="username">{{}}</span> <i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item><span @click="loginOut">注销</span></el-dropdown-item>

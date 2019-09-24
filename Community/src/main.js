@@ -7,6 +7,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import store from './store'
 
 Vue.use(mavonEditor)
 Vue.config.productionTip = false
@@ -15,6 +16,7 @@ Vue.use(ElementUI);
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   render: h => h(App),
   template: '<App/>'

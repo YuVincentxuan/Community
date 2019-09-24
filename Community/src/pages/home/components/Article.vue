@@ -36,22 +36,37 @@
                     >
                         <div>
                             <router-link to="/user">
-                                <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
+                                <el-avatar class="header-img" :size="50" :src="item.headimg"></el-avatar>
                             </router-link>
                             <div class="author-info">
                             <router-link to="/article">
                                 <span class="title">{{item.title}}</span>
                             </router-link>
                             <span class="author-time">
-                                <a  
-                                v-for="tag in item.items"
-                                :key="tag.label">
+                                  <a>
                                     <el-tag
                                         class="article-tag"
-                                    
                                         type="danger"
                                         effect="dark">
-                                        {{ tag.label }}
+                                        {{ item.directionLabel }}
+                                    </el-tag>
+                                 </a>
+                                   <a>
+                                    <el-tag
+                                        class="article-tag"
+                                        type="success"
+                                        effect="dark">
+                                        {{ item.type }}
+                                    </el-tag>
+                                 </a>
+                                <a  
+                                v-for="(tag,i) in item.attributeLabel"
+                                :key="i">
+                                    <el-tag
+                                        class="article-tag"
+                                        type=""
+                                        effect="dark">
+                                        {{ tag }}
                                     </el-tag>
                                  </a>
                             </span>
@@ -61,7 +76,7 @@
                             <span class="sm-tag">阅读 {{item.read}}</span>
                             <span class="sm-tag">评论 {{item.comment}}</span>
                             <span class="sm-tag">喜欢 {{item.like}}</span>
-                            <span class="sm-tag">{{item.time}}</span>
+                            <span class="sm-tag">{{createTime}}</span>
                         </div>
                     </li>
                 </ul>
@@ -119,92 +134,97 @@
 </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
     name:'HomeArticle',
     data(){
         return{
             searchInput:'',
             activeName:0,
-            articles:[
-                {
-                    title:'这是我的第一篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:20,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第二篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                   {
-                    title:'这是我的第三篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第四篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第五篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第六篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                }
-            ],
+            PageNum:1,
+            rows:10,
+            articles:[],
+            // articles:[
+            //     {
+            //         title:'这是我的第一篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:20,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     },
+            //     {
+            //         title:'这是我的第二篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:30,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     },
+            //        {
+            //         title:'这是我的第三篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:30,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     },
+            //     {
+            //         title:'这是我的第四篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:30,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     },
+            //     {
+            //         title:'这是我的第五篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:30,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     },
+            //     {
+            //         title:'这是我的第六篇文章',
+            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         read:10,
+            //         comment:30,
+            //         like:5,
+            //         time:'12小时前',
+            //         items:[
+            //             {label:'前端'},
+            //             {label:'后端'},
+            //             {label:'安卓'},
+            //         ]
+            //     }
+            // ],
             authorList:[
                 {
                     headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
@@ -222,6 +242,25 @@ export default {
                 }
             ]
         }
+    },
+    methods:{
+        getListArticles(){
+            // let params = new URLSearchParams();
+            // params.append('pageNum',this.pageNum)
+            // params.append('rows', this.rows)
+            axios.post('https://www.easy-mock.com/mock/5d88be85b2e0b6264fe76d76/getListArticles')
+            .then(this.getListArticlesSucc)
+        },
+        getListArticlesSucc(res){
+            console.log(res.data)
+            res = res.data
+            if(res.code = 200){
+                this.articles = res.data
+            }
+        }
+    },
+    mounted(){
+        this.getListArticles()
     }
 }
 </script>

@@ -39,7 +39,7 @@
                     <el-avatar class="header-img" :size="40" :src="reply.fromHeadImg"></el-avatar>
                     <div class="author-info">
                         <span class="author-name">{{reply.from}}</span>
-                        <span class="author-time">{{reply.time}}</span>
+                        <span class="author-time">{{reply.createTime}}</span>
                     </div>
                     <div class="icon-btn">
                         <span @click="showReplyInput(i,reply.from,reply.id)"><i class="iconfont el-icon-s-comment"></i>{{reply.commentNum}}</span>
