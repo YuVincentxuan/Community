@@ -17,8 +17,8 @@
         <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
                 <div class="button-box">
-                    <el-button class="button-item">全部文章</el-button>
-                    <el-button class="button-item">热门文章</el-button>
+                    <el-button class="button-item" @click="getListArticles">全部文章</el-button>
+                    <el-button class="button-item" @click="getPopularArticles">热门文章</el-button>
                     <el-input
                         class="searchInput"
                         placeholder="请输入内容"
@@ -126,7 +126,20 @@
                             </el-collapse-item>
                         </el-collapse>
                     </div>
-                
+                </div>
+                <div class="rt-box experience">
+                    <div class="rt-box-header">
+                        <h3><i class="header-icon el-icon-user-solid"></i>面经</h3>
+                    </div>
+                    <div class="rt-box-body">
+                        <ul class="ex-list" 
+                            v-for="(articles,index) in experienceArticles"
+                            :key="index">
+                            <router-link to="/article" tag="li" :title="'作者:'+articles.authorname" class="ex-item">
+                                {{articles.title}}
+                            </router-link>
+                        </ul>
+                    </div>
                 </div>
             </el-col>       
         </el-row>
@@ -135,7 +148,6 @@
 </template>
 <script>
 import axios from 'axios'
-
 export default {
     name:'HomeArticle',
     data(){
@@ -145,103 +157,104 @@ export default {
             PageNum:1,
             rows:10,
             articles:[],
-            authorList:[]
-            // articles:[
-            //     {
-            //         title:'这是我的第一篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:20,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     },
-            //     {
-            //         title:'这是我的第二篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:30,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     },
-            //        {
-            //         title:'这是我的第三篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:30,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     },
-            //     {
-            //         title:'这是我的第四篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:30,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     },
-            //     {
-            //         title:'这是我的第五篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:30,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     },
-            //     {
-            //         title:'这是我的第六篇文章',
-            //         header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         read:10,
-            //         comment:30,
-            //         like:5,
-            //         time:'12小时前',
-            //         items:[
-            //             {label:'前端'},
-            //             {label:'后端'},
-            //             {label:'安卓'},
-            //         ]
-            //     }
-            // ],
-            // authorList:[
-            //     {
-            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         name:'Lana Del Rey',
-            //         url:'/',
-            //         articlesNum:10,
-            //         fansNum:100
-            //     },
-            //     {
-            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-            //         name:'Taylor Swift',
-            //         url:'/',
-            //         articlesNum:10,
-            //         fansNum:100
-            //     }
-            // ]
+            authorList:[],
+            experienceArticles:[]
+        //     articles:[
+        //         {
+        //             title:'这是我的第一篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:20,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         },
+        //         {
+        //             title:'这是我的第二篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:30,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         },
+        //            {
+        //             title:'这是我的第三篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:30,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         },
+        //         {
+        //             title:'这是我的第四篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:30,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         },
+        //         {
+        //             title:'这是我的第五篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:30,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         },
+        //         {
+        //             title:'这是我的第六篇文章',
+        //             header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             read:10,
+        //             comment:30,
+        //             like:5,
+        //             time:'12小时前',
+        //             items:[
+        //                 {label:'前端'},
+        //                 {label:'后端'},
+        //                 {label:'安卓'},
+        //             ]
+        //         }
+        //     ],
+        //     authorList:[
+        //         {
+        //             headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             name:'Lana Del Rey',
+        //             url:'/',
+        //             articlesNum:10,
+        //             fansNum:100
+        //         },
+        //         {
+        //             headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+        //             name:'Taylor Swift',
+        //             url:'/',
+        //             articlesNum:10,
+        //             fansNum:100
+        //         }
+        //     ]
         }
     },
     methods:{
@@ -249,23 +262,45 @@ export default {
             let params = new URLSearchParams();
             params.append('pageNum',this.pageNum)
             params.append('rows', this.rows)
-            axios.post('https://www.easy-mock.com/mock/5d88be85b2e0b6264fe76d76/getListArticles',params)
+            // axios.post('/getListArticles',params)
+            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getListArticles')
             .then(this.getListArticlesSucc)
         },
         getListArticlesSucc(res){
-            console.log(res.data)
             res = res.data
-            if(res.code = 200){
+            if(res.code == 200){
                 this.articles = res.data
             }
         },
+        getPopularArticles(){
+            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getPopularArticles')
+            // axios.post('/getPopularArticles')
+            .then(this.getPopularArticlesSucc)
+        },
+        getPopularArticlesSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.articles = res.data
+            }
+        },
+        getExperienceArticle(){
+            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getInterviewExperienceArticles')
+            .then(this.getExperienceArticleSucc)
+        },
+        getExperienceArticleSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.experienceArticles = res.data
+                console.log(thsi.experienceArticles)
+            }
+        },
         getAllAuthors(){
-            axios.post('/getAllAuthors')
+            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getAllAuthors')
             .then(this.getAllAuthorsSucc)
         },
         getAllAuthorsSucc(res){
             res = res.data
-            if(res.code = 200){
+            if(res.code == 200){
                 this.authorList = res.url
             }
         },
@@ -277,6 +312,7 @@ export default {
     mounted(){
         this.getListArticles()
         this.getAllAuthors()
+        this.getExperienceArticle()
     }
 }
 </script>
@@ -380,9 +416,20 @@ export default {
                         .el-collapse-item__content
                             padding-bottom 0
             .tag-list
-                padding 20px
+                padding 20px 
                 .tag-list-item
                     margin 2px 0
+            .ex-list
+                .ex-item
+                    padding 10px 10px
+                    border-bottom: 1px solid rgba(178,186,194,.15)
+                    color #000
+                    font-size 18px
+                    cursor pointer
+                    overflow hidden
+                    white-space nowrap
+                    text-overflow ellipsis
+
 @media screen and (max-width: 1200px) {
     .container >>> .el-pager li{
         margin 0 !important

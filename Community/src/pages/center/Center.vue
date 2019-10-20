@@ -6,20 +6,41 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-                    <center-tab></center-tab>
+                    <center-tab :userList=list></center-tab>
                 </el-col>
             </el-row>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios'
 import CenterHeader from './components/CenterHeader'
 import CenterTab from './components/Tab'
 export default {
     name:'Center',
+    data(){
+        return{
+              list:[]
+        }
+    },
     components:{
         CenterHeader,
         CenterTab
+    },
+    methods:{
+        user(){
+            axios.get('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/user')
+            .then(this.userSucc)
+        },
+        userSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.list = res.data
+            }
+        }
+    },
+    mounted(){
+        this.user()
     }
 }
 </script>

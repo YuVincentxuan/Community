@@ -2,32 +2,43 @@
     <div>
         <div class="center-bg" :style="styles">
             <div class="my-header-img">
-                <el-avatar class="header-img" :size="100" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-                <span class="my-name">{{userName}}</span>
+                <el-avatar class="header-img" :size="100" :src="headimg"></el-avatar>
+                <span class="my-name">{{userList.userName}}</span>
             </div>
             <div class="btn-box">
                 <el-button :size="_size" @click="changeInfo" plain>编辑资料</el-button>
-                <el-button :size="_size" plain>上传头像</el-button>
+                <el-button :size="_size" @click="dialogVisible = true" plain>上传头像</el-button>
+               
             </div>
+             <el-dialog
+                    title="上传头像"
+                    :visible.sync="dialogVisible"
+                    :width="_width">
+                    <upload-image></upload-image>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                    </span>
+            </el-dialog>
         </div>
         <div class="my-info" v-show="myInfoShow">
             <el-row :gutter="10">
                 <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="18">
                     <ul class="info-list">
-                        <li class="info-list-item">    
-                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>签名</span>{{userSign}}
+                        <li class="info-list-item" v-if="userList.information">    
+                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>签名</span>{{userList.information}}
                         </li>
-                        <li class="info-list-item">    
-                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{userBirth}}
+                        <li class="info-list-item" v-if="userList.userBirth">    
+                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{userList.userBirth}}
                         </li>
-                        <li class="info-list-item">
-                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>爱好</span>{{userHobby}}
+                        <li class="info-list-item"  v-if="userList.userHobby">
+                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>爱好</span>{{userList.userHobby}}
                         </li>
-                        <li class="info-list-item">  
-                            <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>工作</span>{{userJob}}
+                        <li class="info-list-item"  v-if="userList.job">  
+                            <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>工作</span>{{userList.job}}
                         </li>
-                        <li class="info-list-item">  
-                            <span class="info-title"> <i class="iconfont el-icon-s-promotion"></i>邮箱</span>{{userEmail}}
+                        <li class="info-list-item"  v-if="userList.email">  
+                            <span class="info-title"> <i class="iconfont el-icon-s-promotion"></i>邮箱</span>{{userList.email}}
                         </li>
                     </ul>
                 </el-col>
@@ -35,11 +46,15 @@
                     <ul class="my-data">
                         <li class="my-data-item">
                             <h4 class="my-data-title">文章</h4>
-                            <span class="my-data-num">12</span>
+                            <span class="my-data-num">{{userList.articleNumber}}</span>
                         </li>
                         <li class="my-data-item">
-                            <h4 class="my-data-title">点赞</h4>
-                            <span class="my-data-num">12</span>
+                            <h4 class="my-data-title">问答</h4>
+                            <span class="my-data-num">{{userList.questionNumber}}</span>
+                        </li>
+                        <li class="my-data-item">
+                            <h4 class="my-data-title">回答</h4>
+                            <span class="my-data-num">{{userList.answerNumber}}</span>
                         </li>
                     </ul>
                 </el-col>
@@ -116,12 +131,22 @@
             </el-row>
         </div>
     </div>
+
 </template>
 <script>
+import UploadImage from './UploadImage'
 export default {
     name:'CenterTab',
+    components:{
+        UploadImage
+    },
+    props:{
+        userList:Array
+    },
     data(){
         return{
+            dialogVisible:false,
+            headimg:'',
             myInfoShow:'true',
             userName:'臭屁辣妹儿',
             userSign:'我是一个没有感情的code killer',
@@ -147,10 +172,19 @@ export default {
           }else{
               return 'medium'
           }
+        },
+         _width:function(){
+        if(document.body.clientWidth <= 667){
+            return '100%'
+          }else{
+              return '30%'
+          }
         }
     },
+    
     mounted() {
-      this.styles.backgroundImage = 'url('+this.bgImg+')'
+      this.styles.backgroundImage = 'url('+userList.headimg+')'
+      this.headimg = userList.headimg
     },
 }
 </script>
@@ -225,7 +259,7 @@ export default {
         .my-data
             text-align center
             .my-data-item
-                width 50%
+                width 33%
                 float left
                 .my-data-title
                     color black

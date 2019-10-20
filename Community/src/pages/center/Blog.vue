@@ -22,7 +22,7 @@
                                 </router-link>
                                 <div class="author-info">
                                     <router-link to="/article">
-                                        <span class="title">{{item.title}}</span>
+                                        <span class="title">{{item.titile}}</span>
                                     </router-link>
                                     <span class="author-time">
                                         <a  
@@ -53,6 +53,9 @@
                     </ul>
                     <el-pagination
                         background
+                        @current-change="handleCurrentChange"
+                        @prev-click="handlePrevClick"
+                        @next-click="handleNextClick"
                         layout="prev, pager, next"
                         :total="100">
                     </el-pagination>
@@ -63,6 +66,7 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
 import CenterHeader from './components/CenterHeader'
 export default {
     name:'Blog',
@@ -71,104 +75,106 @@ export default {
     },
      data(){
         return{
+            rows:10,
+            pageNum:1,
             searchInput:'',
             activeName:0,
             articles:[
-                {
-                    title:'这是我的第一篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:20,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第二篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                   {
-                    title:'这是我的第三篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第四篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第五篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                },
-                {
-                    title:'这是我的第六篇文章',
-                    header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    read:10,
-                    comment:30,
-                    like:5,
-                    time:'12小时前',
-                    items:[
-                        {label:'前端'},
-                        {label:'后端'},
-                        {label:'安卓'},
-                    ]
-                }
+                // {
+                //     title:'这是我的第一篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:20,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // },
+                // {
+                //     title:'这是我的第二篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:30,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // },
+                //    {
+                //     title:'这是我的第三篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:30,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // },
+                // {
+                //     title:'这是我的第四篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:30,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // },
+                // {
+                //     title:'这是我的第五篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:30,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // },
+                // {
+                //     title:'这是我的第六篇文章',
+                //     header:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+                //     read:10,
+                //     comment:30,
+                //     like:5,
+                //     time:'12小时前',
+                //     items:[
+                //         {label:'前端'},
+                //         {label:'后端'},
+                //         {label:'安卓'},
+                //     ]
+                // }
             ],
-            authorList:[
-                {
-                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    name:'Lana Del Rey',
-                    url:'/',
-                    articlesNum:10,
-                    fansNum:100
-                },
-                {
-                    headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-                    name:'Taylor Swift',
-                    url:'/',
-                    articlesNum:10,
-                    fansNum:100
-                }
-            ]
+            // authorList:[
+            //     {
+            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         name:'Lana Del Rey',
+            //         url:'/',
+            //         articlesNum:10,
+            //         fansNum:100
+            //     },
+            //     {
+            //         headerImg:'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
+            //         name:'Taylor Swift',
+            //         url:'/',
+            //         articlesNum:10,
+            //         fansNum:100
+            //     }
+            // ]
         }
     },
     methods: {
@@ -189,7 +195,24 @@ export default {
                     message: '已取消删除'
                 });          
             });
+        },
+        getUserArticles(){
+            let params = new URLSearchParams();
+            params.append('pageNum',this.pageNum)
+            params.append('rows', this.rows)
+            axios.get('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/user/articles')
+            .then(this.getUserArticlesSucc)
+        },
+        getUserArticlesSucc(res){
+            res = res.data
+            if(res.code == 200){
+                console.log(res)
+                this.articles = res.data.list
+            }
         }
+    },
+    mounted(){
+        this.getUserArticles()
     }
 }
 </script>

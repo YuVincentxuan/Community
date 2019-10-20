@@ -11,6 +11,10 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      'api':{
+        target:'http://localhost:8080',
+        changeOrigin:true,//允许跨域
+      }
     },
 
     // Various Dev Server settings

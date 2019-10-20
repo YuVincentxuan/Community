@@ -5,7 +5,7 @@
                 <el-col class="lt-box" :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
                     <div class="article-show" >
                         <div class="author-title">
-                            <el-avatar class="header-img" :size="50" :src="this.headImg"></el-avatar>
+                            <el-avatar class="header-img" :size="50" :src="headImg"></el-avatar>
                             <div class="author-info">
                                 <span class="author-name">{{this.authorName}}</span>
                                 <span class="author-time">{{this.date}} 阅读量 {{this.read}}</span>
@@ -20,7 +20,7 @@
                     <div class="comment-list">
                         <h3>用户评论</h3>
                         <div class="comment-item">
-                           <article-comment :list="comment"></article-comment>
+                           <article-comment :comments="comment"></article-comment>
                         </div>
                     </div>
                 </el-col>
@@ -30,7 +30,7 @@
                             <h3><i class="header-icon el-icon-user-solid"></i>关于作者</h3>
                         </div>
                         <div class="rt-box-body">
-                            <el-avatar class="header-img" :size="60" :src="this.headImg"></el-avatar>
+                            <el-avatar class="header-img" :size="60" :src="headImg"></el-avatar>
                             <div class="author-info">
                                 <span class="author-name">{{this.authorName}}</span>
                                 <span class="author-sign" title="我是一个没有感情的code killer">我是一个没有感情的code killer</span>
@@ -42,12 +42,18 @@
                            
                         </div>
                     </div>
-                    <div class="rt-box author-rank">
+                    <div class="rt-box experience">
                         <div class="rt-box-header">
-                            <h3><i class="header-icon el-icon-user-solid"></i>作者排行榜</h3>
+                            <h3><i class="header-icon el-icon-user-solid"></i>推荐文章</h3>
                         </div>
                         <div class="rt-box-body">
-                            
+                            <ul class="ex-list" 
+                                v-for="(articles,index) in articleList"
+                                :key="index">
+                                <router-link to="/article" tag="li" :title="'题目:'+articles.title" class="ex-item">
+                                    {{articles.title}}
+                                </router-link>
+                            </ul>
                         </div>
                     </div>
                 </el-col>       
@@ -56,9 +62,8 @@
     </div>    
 </template>
 <script>
+import axios from 'axios'
 import ArticleComment from './component/Comment'
-
-
 export default {
     name:'Article',
     components:{
@@ -73,12 +78,13 @@ export default {
             read:'',
             date:'',
             headImg:'',
-            authorName,
+            authorName:'',
+            articleList:[]
         }
     },
     methods:{
         readPassage(){
-            axios.post('/readPassage')
+            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/readPassage')
             .then(this.readPassageSucc)
         },
         readPassageSucc(res){
@@ -88,13 +94,16 @@ export default {
                 this.title = res.title
                 this.authorName = res.authorName
                 this.headImg = res.headImg
-                this.date = res.headImg
+                this.date = res.date
                 this.read = res.read
                 this.content = res.content
                 this.comment = res.comment
-
+                this.articleList = res.articleList
             }
         }
+    },
+    mounted(){
+        this.readPassage()
     }
 }
 </script>
@@ -214,4 +223,14 @@ export default {
                 padding 20px
                 .tag-list-item
                     margin 2px 0
+            .ex-list
+                .ex-item
+                    padding 10px 10px
+                    border-bottom: 1px solid rgba(178,186,194,.15)
+                    color #000
+                    font-size 18px
+                    cursor pointer
+                    overflow hidden
+                    white-space nowrap
+                    text-overflow ellipsis
 </style>

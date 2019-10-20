@@ -39,7 +39,27 @@
                     </div>
                 </el-col>   
             </el-col>
-                      
+            <el-col :xs="1" :sm="1" :md="1" :lg="1" :offset="6" class="showBtn">
+                <div class="rightNav">
+                <el-button class="showDrawer" @click="drawer = true" type="primary" style="margin-left: 16px;" icon="el-icon-s-fold">
+                </el-button>
+                </div>
+                <el-drawer
+                    title="导航"
+                    :visible.sync="drawer"
+                    direction="ltr"
+                    size="50%"
+                    >
+                    <el-menu :default-active="this.$router.path" class="el-menu-demo" router mode="horizontal">
+                        <el-menu-item v-for="(item,i) in navList" :key="i" :index="item.name">
+                            {{item.navItem}}
+                        </el-menu-item>
+                    </el-menu>
+
+
+                </el-drawer>
+
+            </el-col>         
         </el-row>
         
     </header>
@@ -52,6 +72,7 @@ export default {
         activeIndex: '1',
         navActive:false,
         searchCont:'',
+        drawer: false,
         navList:[
             {name:'/',navItem:'首页'},
             {name:'/center',navItem:'个人中心'},
@@ -152,6 +173,9 @@ span.nav-on{
     margin-top: 60px;
     display: none;
 }
+.showBtn{
+    display none
+}
 @media screen and (max-width: 768px) {
     .offcanvas-collapse{
         display: none;
@@ -164,6 +188,14 @@ span.nav-on{
     }
     .header h1{
         width:150px;
+    }
+    .showBtn{
+        display inline
+    }
+    .showDrawer{
+        vertical-align middle
+        font-size 25px
+        padding 5px 10px
     }
 }
 </style>
