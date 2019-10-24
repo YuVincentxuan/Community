@@ -9,6 +9,8 @@ import User from '../pages/user/User'
 import Article from '../pages/article/Article'
 import Write from '../pages/write/Write'
 import Login from '../pages/login/Login'
+import Admin from '../pages/admin/Admin'
+import Question from '../pages/question/Question'
 Vue.use(Router)
 
 export default new Router({
@@ -57,6 +59,16 @@ export default new Router({
       path:'/login',
       name:'Login',
       component:Login
+    },
+    {
+      path:'/admin',
+      name:'Admin',
+      component:Admin
+    },
+    {
+      path:'/question',
+      name:'Question',
+      component:Question
     }
   ]
 })

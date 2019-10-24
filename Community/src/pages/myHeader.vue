@@ -76,6 +76,8 @@ export default {
         navList:[
             {name:'/',navItem:'首页'},
             {name:'/center',navItem:'个人中心'},
+            {name:'/admin',navItem:'管理员'},
+            {name:'/question',navItem:'问答'}
         ]
       }
     },

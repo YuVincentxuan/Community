@@ -19,7 +19,7 @@
                         </div>
                     </el-col>
                 </el-row>
-            </div>
+        </div>
             <div class="user-tab">
                 <el-row :gutter="10">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="center-nav">

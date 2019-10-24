@@ -78,6 +78,14 @@ a{
   padding: 0;
   margin: 5px
 }
-
-
+.el-card__body{
+  padding: 0
+}
+.el-upload--picture-card{
+    background-color: rgba(0,0,0,0) !important ;
+}
+.el-upload{
+    height: 100%;
+    width: 100%
+}
 </style>
