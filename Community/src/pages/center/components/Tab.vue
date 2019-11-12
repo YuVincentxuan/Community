@@ -2,25 +2,26 @@
     <div>
         <div class="center-bg" :style="styles">
             <div class="my-header-img">
-                <el-avatar class="header-img" :size="100" :src="headimg"></el-avatar>
-                <span class="my-name">{{userList.userName}}</span>
+                <el-avatar class="header-img" :size="100" :src="userList.headimg"></el-avatar>
+                <span class="my-name">{{userList.username}}</span>
             </div>
             <div class="btn-box">
-                <el-button :size="_size" @click="changeInfo" plain>编辑资料</el-button>
+                <el-button :size="_size" @click="myInfoShow =!myInfoShow" plain>编辑资料</el-button>
                 <el-button :size="_size" @click="dialogVisible = true" plain>上传头像</el-button>
-               
             </div>
-             <el-dialog
-                    title="上传头像"
-                    :visible.sync="dialogVisible"
-                    :width="_width">
-                    <upload-image></upload-image>
-                    <span slot="footer" class="dialog-footer">
-                        <el-button @click="dialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-                    </span>
-            </el-dialog>
+      
         </div>
+        <el-dialog
+            title="上传头像"
+            :visible.sync="dialogVisible"
+            :top="'5vh'"
+            :width="_width">
+            <upload-image @upload="uploadImg"></upload-image>
+            <!-- <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="uploadImg,dialogVisible = false">确 定</el-button>
+            </span> -->
+        </el-dialog>
         <div class="my-info" v-show="myInfoShow">
             <el-row :gutter="10">
                 <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="18">
@@ -31,8 +32,8 @@
                         <li class="info-list-item" v-if="userList.userBirth">    
                             <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{userList.userBirth}}
                         </li>
-                        <li class="info-list-item"  v-if="userList.userHobby">
-                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>爱好</span>{{userList.userHobby}}
+                        <li class="info-list-item"  v-if="userList.telNumber">
+                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>电话</span>{{userList.telNumber}}
                         </li>
                         <li class="info-list-item"  v-if="userList.job">  
                             <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>工作</span>{{userList.job}}
@@ -66,11 +67,9 @@
                             <h4>我的关注</h4>
                             <span>14</span>
                         </div>
-                        <ul class="people-list">
-                            <li class="people-list-item">
-                                <el-avatar class="people-header-img" :size="50" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-                            </li>
-                        </ul>
+                        <div class="people-list">
+                            <el-avatar @click="goToUser(id)"  class="people-header-img" title="yuwenx"  :size="50" src="https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg"></el-avatar>
+                        </div>
                     </div>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
@@ -79,11 +78,9 @@
                             <h4>我的粉丝</h4>
                             <span>14</span>
                         </div>
-                        <ul class="people-list">
-                            <li class="people-list-item">
-                                <el-avatar class="people-header-img" :size="50" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-                            </li>
-                        </ul>
+                        <div class="people-list">
+                            <el-avatar class="people-header-img" :size="50" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                        </div>
                     </div>
                 </el-col>
             </el-row>
@@ -111,7 +108,7 @@
                                     </el-date-picker>
                             </li>
                             <li class="info-list-item">
-                                <span class="list-title">爱好</span>
+                                <span class="list-title">电话</span>
                                 <el-input v-model="userHobby" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>
                             <li class="info-list-item">
@@ -134,6 +131,7 @@
 
 </template>
 <script>
+import axios from 'axios'
 import UploadImage from './UploadImage'
 export default {
     name:'CenterTab',
@@ -141,28 +139,61 @@ export default {
         UploadImage
     },
     props:{
-        userList:Array
+        userList:Object
     },
     data(){
         return{
+            List:{},
             dialogVisible:false,
+            myInfoShow:true,
             headimg:'',
-            myInfoShow:'true',
-            userName:'臭屁辣妹儿',
-            userSign:'我是一个没有感情的code killer',
-            userBirth:'1999-06-08',
-            userHobby:'代码 coding',
-            userJob:'前端',
-            userEmail:'yuwxuan@qq.com',
+            userName:'',
+            userSign:'',
+            userBirth:'',
+            userHobby:'',
+            telNumber:'',
+            userEmail:'',
+            userJob:'',
             bgImg:'https://ae01.alicdn.com/kf/Hdd856ae4c81545d2b51fa0c209f7aa28Z.jpg',
             styles:{
-                backgroundImage:'url(https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg)'
+                backgroundImage:''
             }
         }
     },
     methods:{
         changeInfo(){
-            this.myInfoShow = !this.myInfoShow;
+            let params = new URLSearchParams();
+            params.append('userName',this.userName)
+            params.append('signature',this.userSign)
+            params.append('birthday',this.userBirth)
+            params.append('email',this.userEmail)
+            axios.post('http://blog.swpuiot.com/editData',params)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.myInfoShow = !this.myInfoShow;
+                    this.$message({
+                        type: 'info',
+                        message: '修改资料成功'
+                    });   
+                }
+            })
+            
+        },
+        goToUser(id){
+            this.$router.push('/user/'+id)
+        },
+        uploadImg(val){
+            console.log(val)
+            let params = new URLSearchParams();
+            params.append('img',val)
+            axios.post('http://blog.swpuiot.com/uploadImage',params)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.dialogVisible = false;
+                }
+            })
         }
     },
     computed:{
@@ -181,11 +212,23 @@ export default {
           }
         }
     },
-    
     mounted() {
-      this.styles.backgroundImage = 'url('+userList.headimg+')'
-      this.headimg = userList.headimg
+    //    let _this=this;
+    //    let userList = {...this._props}
+        // console.log(this.userList)
     },
+    watch:{
+      userList(newValue,oldValue){
+        this.styles.backgroundImage = 'url('+newValue.headimg+')'
+        this.userName = newValue.username
+        this.userSign = newValue.userSign
+        this.userBirth = newValue.userBirth
+        this.telNumber = newValue.telNumber
+        this.userJob = newValue.job
+        this.userEmail = newValue.email
+      }
+    }
+
 }
 </script>
 <style lang="stylus" scoped>
@@ -277,6 +320,14 @@ export default {
                     line-height 70px
                     float right
                     font-size 14px
+            .people-list
+                margin 0 auto
+                left 0
+                right 0
+                max-height 120px
+                overflow hidden
+                .people-header-img
+                    margin 5px 5px
         .my-info-change
             background-color white
             padding 20px 30px

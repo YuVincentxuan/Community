@@ -1,50 +1,51 @@
 <template>
   <div>
-        <div class="show-info">
-            <div class="test test1">
-                <vueCropper
-                    ref="cropper"
-                    :img="option.img"
-                    :outputSize="option.size"
-                    :outputType="option.outputType"
-                    :info="true"
-                    :full="option.full"
-                    canMove="true"
-                    canMoveBox="true"
-                    :fixedBox="option.fixedBox"
-                    :original="option.original"
-                    :autoCrop="option.autoCrop"
-                    :autoCropWidth="option.autoCropWidth"
-                    :autoCropHeight="option.autoCropHeight"
-                    :centerBox="option.centerBox"
-                    :high="option.high"
-                    :infoTrue="option.infoTrue"
-                    @realTime="realTime"
-                    @imgLoad="imgLoad"
-                    @cropMoving="cropMoving"
-                    :enlarge="option.enlarge"
-                ></vueCropper>
-            </div>
-            <div class="model" v-show="model">
-			<div class="model-show" @click="model = false">
-				<img :src="modelSrc" alt="" @click="model = false">
-			</div>
-		</div>
-            <div class="test-button">
-                <label class="btn" for="uploads">选择图片</label>
-                <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
-                <button @click="refreshCrop" class="btn">重置</button>
-                <button @click="changeScale(1)" class="btn">+</button>
-                <button @click="changeScale(-1)" class="btn">-</button>
-                <button @click="rotateLeft" class="btn">逆时针旋转</button>
-                <button @click="rotateRight" class="btn">顺时针旋转</button>
-                <button @click="finish('base64')" class="btn">预览(base64)</button>
-                <button @click="finish('blob')" class="btn">preview(blob)</button>
-                <a @click="down('base64')" class="btn">下载(base64)</a>
-                <a @click="down('blob')" class="btn">download(blob)</a>
-                <a :href="downImg" download="demo.png" ref="downloadDom"></a>
-            </div>
+    <div class="show-info">
+      <div class="test test1">
+        <vueCropper
+            ref="cropper"
+            :img="option.img"
+            :outputSize="option.size"
+            :outputType="option.outputType"
+            :info="true"
+            :full="option.full"
+            canMove="true"
+            canMoveBox="true"
+            :fixedBox="option.fixedBox"
+            :original="option.original"
+            :autoCrop="option.autoCrop"
+            :autoCropWidth="option.autoCropWidth"
+            :autoCropHeight="option.autoCropHeight"
+            :centerBox="option.centerBox"
+            :high="option.high"
+            :infoTrue="option.infoTrue"
+            @realTime="realTime"
+            @imgLoad="imgLoad"
+            @cropMoving="cropMoving"
+            :enlarge="option.enlarge"
+        ></vueCropper>
       </div>
+      <div class="model" v-show="model">
+        <div class="model-show" @click="model = false">
+          <img :src="modelSrc" alt="" @click="model = false">
+        </div>
+      </div>
+      <div class="test-button">
+        <label class="btn" for="uploads"><i class="el-icon-picture-outline"></i></label>
+        <input type="file" id="uploads" style="position:absolute; clip:rect(0 0 0 0);" accept="image/png, image/jpeg, image/gif, image/jpg" @change="uploadImg($event, 1)">
+        <button @click="refreshCrop" class="btn"><i class="el-icon-refresh"></i></button>
+        <button @click="changeScale(1)" class="btn"><i class="el-icon-zoom-in"></i></button>
+        <button @click="changeScale(-1)" class="btn"><i class="el-icon-zoom-out"></i></button>
+        <button @click="rotateLeft" class="btn"><i class="el-icon-refresh-left"></i></button>
+        <button @click="rotateRight" class="btn"><i class="el-icon-refresh-right"></i></button>
+        <button @click="finish('base64')" class="btn"><i class="el-icon-view"></i></button>
+        <!-- <button @click="finish('blob')" class="btn">preview(blob)</button> -->
+        <a @click="down('base64')" class="btn"><i class="el-icon-download"></i></a>
+        <!-- <a @click="down('blob')" class="btn">download(blob)</a> -->
+        <a :href="downImg" download="demo.png" ref="downloadDom"></a>
+        <button @click="uploadHeaderImg" class="btn danger-btn"><i class="el-icon-upload2"></i></button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -53,7 +54,7 @@
     name:'UploadImage',
     components: {
         VueCropper,
-},
+    },
     data() {
       return {
             model: false,
@@ -62,7 +63,7 @@
             previews: {},
             downImg:'#',
             option:{
-                img:'https://ae01.alicdn.com/kf/Hf8e01dc962a54b8b8670a2d73d175c3ej.jpg',
+                img:'',
                 size: 1,
                 outputType:'jpg',
                 full:false,
@@ -80,7 +81,7 @@
             }
         } 
     },
-      methods: {
+    methods: {
     changeImg() {
       this.option.img = this.lists[~~(Math.random() * this.lists.length)].img;
     },
@@ -230,7 +231,12 @@
     imgLoad(msg) {
       console.log(msg);
     },
-
+    uploadHeaderImg(){
+      this.$refs.cropper.getCropData(data => {
+        this.$emit('upload',data)
+      })
+      
+    },
     cropMoving(data) {
       this.option.cropData = data;
     }
@@ -247,16 +253,19 @@
   .show-info{
     width: 100%;
     height:100%;
+    display: flex;
   }
   .test{
+      flex:  1 0 0;
       width: 100%;
       height:100%;
   }
 .test-button {
-  display: flex;
-  flex-wrap: wrap;
+  flex:  0 1 0;
+  flex-direction: row;
+  justify-content:space-between;
+  margin: 0 10px;
 }
-
 .btn {
   display: inline-block;
   line-height: 1;
@@ -268,7 +277,7 @@
   text-align: center;
   box-sizing: border-box;
   outline: none;
-  margin: 20px 10px 0px 0px;
+  margin: 0px 0px 10px 20px;
   padding: 9px 15px;
   font-size: 14px;
   border-radius: 4px;
@@ -279,7 +288,10 @@
   text-decoration: none;
   user-select: none;
 }
-
+.danger-btn{
+  background-color: #F56C6C;
+  border-color: #F56C6C;
+}
 .des {
   line-height: 30px;
 }

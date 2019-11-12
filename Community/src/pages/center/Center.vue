@@ -20,7 +20,7 @@ export default {
     name:'Center',
     data(){
         return{
-              list:[]
+              list:{}
         }
     },
     components:{

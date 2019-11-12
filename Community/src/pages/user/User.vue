@@ -32,37 +32,37 @@
                                                 v-for="item in articles"
                                                 :key="item.title"
                                             >
-                                            <div>
-                                                <router-link to="/user">
-                                                    <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
-                                                </router-link>
-                                                <div class="author-info">
-                                                <router-link to="/article">
-                                                    <span class="title">{{item.title}}</span>
-                                                </router-link>
-                                                <span class="author-time">
-                                                    <a  
-                                                    v-for="tag in item.items"
-                                                    :key="tag.label">
-                                                        <el-tag
-                                                            class="article-tag"
-                                                        
-                                                            type="danger"
-                                                            effect="dark">
-                                                            {{ tag.label }}
-                                                        </el-tag>
-                                                    </a>
-                                                </span>
+                                                <div>
+                                                    <!-- <router-link to="/user">
+                                                        <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
+                                                    </router-link> -->
+                                                    <div class="author-info">
+                                                    <router-link to="/article">
+                                                        <span class="title">{{item.title}}</span>
+                                                    </router-link>
+                                                    <span class="author-time">
+                                                        <a  
+                                                        v-for="tag in item.items"
+                                                        :key="tag.label">
+                                                            <el-tag
+                                                                class="article-tag"
+                                                            
+                                                                type="danger"
+                                                                effect="dark">
+                                                                {{ tag.label }}
+                                                            </el-tag>
+                                                        </a>
+                                                    </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="card-text">
-                                                <span class="sm-tag">阅读 {{item.read}}</span>
-                                                <span class="sm-tag">评论 {{item.comment}}</span>
-                                                <span class="sm-tag">喜欢 {{item.like}}</span>
-                                                <span class="sm-tag">{{item.time}}</span>
-                                            </div>
-                                        </li>
-                                    </ul>
+                                                <div class="card-text">
+                                                    <span class="sm-tag">阅读 {{item.read}}</span>
+                                                    <span class="sm-tag">评论 {{item.comment}}</span>
+                                                    <span class="sm-tag">喜欢 {{item.like}}</span>
+                                                    <span class="sm-tag">{{item.time}}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
                                     <el-pagination
                                         background
                                         layout="prev, pager, next"
@@ -278,7 +278,6 @@ export default {
             z-index 10
             @media screen and (max-width: 1200px) {
                 position relative
-                float 
                 text-align center
             }
     .user-info
@@ -319,6 +318,7 @@ export default {
                 margin-top 5px 
                 .sm-tag
                     font-size 14px
+           
         .author-info
             display inline-block
             margin-left 5px
@@ -360,4 +360,9 @@ export default {
                     line-height 70px
                     float right
                     font-size 14px
+@media screen and (max-width: 1200px) {
+    .content >>> .el-pager li{
+        margin 0 !important
+    }
+}
 </style>

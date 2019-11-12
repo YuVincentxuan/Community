@@ -2,7 +2,7 @@
 <div>
     <el-card class="box-card">
         <div slot="header" class="clearfix">
-            <span>卡片名称</span>
+            <span>认证申请列表</span>
             <div style="float: right;">
             <el-button style="padding: 3px 0" type="text"><i class="el-icon-arrow-left" @click="identify_goToPage(-1)"></i></el-button>
             <span>{{identifyPage}}</span>
@@ -36,7 +36,7 @@
                     </el-table-column>
                     <el-table-column
                     label="学号"
-                    prop="id">
+                    prop="idNumber">
                     </el-table-column>
                     <el-table-column
                     align="right">
@@ -52,11 +52,11 @@
                         <div v-else>
                             <el-button
                                 size="mini"
-                                @click="handleEdit(scope.$index, scope.row, '已通过')">同意</el-button>
+                                @click="handleConfirm(scope.$index, scope.row, 'yes')">同意</el-button>
                             <el-button
                                 size="mini"
                                 type="danger"
-                                @click="handleDelete(scope.$index, scope.row, '已拒绝')">拒绝</el-button>
+                                @click="handleConfirm(scope.$index, scope.row, 'no')">拒绝</el-button>
                         </div>
                     </template>
                     </el-table-column>
@@ -66,12 +66,13 @@
 </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
     name:'MessageList',
     data() {
       return {
         identifyPage:1,
-        pageNum:12,
+        pageNum:1,
         tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -97,16 +98,26 @@ export default {
             reason: '上海市普上海市普陀区金沙陀区金',
             statu:'已拒绝'
         }],
-        search: ''
+        search: '',
+        // tableData:[]
       }
     },
     methods: {
-      handleEdit(index, row,result) {
+        getUserApply(){
+            axios.get('http://blog.swpuiot.com/getUserApply?pageNum='+this.identifyPage+'&rows=10')
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.tableData = res.data
+                    this.pageNum = res.totalPage
+                }
+            })
+        },
+      handleConfirm(index, row,result) {
+        let id = result.ID
+        axios.get('http://blog.swpuiot.com/setUserApplySuccessful?array=0&confirm='+result+'&id='+id+'')
         console.log(index, row);
         row.statu = result
-      },
-      handleDelete(index, row,result) {
-       row.statu = result
       },
       identify_goToPage(data){
             if(data == -1 && this.identifyPage+data <= 0){
@@ -119,7 +130,7 @@ export default {
                 //     page:this.page
                 // }).then(res => this.identify = res.data).catch(err => this.$message.error('获取失败'))
             }
-    }
+        }
     },
         
 }

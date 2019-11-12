@@ -13,23 +13,28 @@
                         </div>
                         <div class="certificate-container">
                             <h5>认证状态</h5>
-                            <span>未认证 已认证</span>
-                            <el-button type="danger" v-show="showBtn" @click="showCetificateInput " size="mini" class="certificate-btn" plain>立即认证</el-button>
+                            <div style="display:inline-block;margin-top:5px;" v-show="showBtn">
+                                <el-tag v-if="status == 1" type="success">已认证</el-tag>
+                                <el-tag v-else-if="status == 0" type="warning">认证中...</el-tag>
+                                <el-tag v-else-if="status == 2" type="danger">认证失败</el-tag>
+                                <el-tag v-else type="info">未认证</el-tag>
+                            </div>
+                            <el-button v-if="status == 3" type="danger" v-show="showBtn" @click="showCetificateInput " size="mini" class="certificate-btn" plain>立即认证</el-button>
                         </div>
                         <div class="certificateForm" v-show="showInput">
                             <div style="margin: 20px;"></div>
-                                <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-                                    <el-form-item label="姓名">
+                                <el-form status-icon :label-position="labelPosition" ref="formLabelAlign" :rules="rules" label-width="80px" :model="formLabelAlign">
+                                    <el-form-item label="姓名" prop="name">
                                         <el-input v-model="formLabelAlign.name"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="学号">
-                                        <el-input v-model="formLabelAlign.region"></el-input>
+                                    <el-form-item label="学号" prop="id">
+                                        <el-input v-model="formLabelAlign.id"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="申请原因">
-                                        <el-input type="textarea" v-model="formLabelAlign.desc"></el-input>
+                                    <el-form-item label="申请理由" prop="reason">
+                                        <el-input type="textarea" v-model="formLabelAlign.reason"></el-input>
                                     </el-form-item>
-                                    </el-form>
-                            <el-button type="danger"  v-show="showInput" @click="showCetificateBtn " size="mini" class="certificate-btn" plain>立即提交</el-button>
+                                </el-form>
+                            <el-button type="danger" v-show="showInput" @click="showCetificateBtn('formLabelAlign')" size="mini" class="certificate-btn" plain>立即提交</el-button>
                         </div>
                     </div>
                 </el-col>
@@ -47,16 +52,58 @@ export default {
         CenterTab
     },
      data() {
-      return {
-        labelPosition: 'left',
-        showInput:false,
-        showBtn :true,
-        formLabelAlign: {
-          name: '',
-          region: '',
-          desc: ''
+        var validateName = (rule, value, callback) => {
+            let testId = /^[\u4e00-\u9fa5]{2,4}$/
+            if(value === ''){
+                callback(new Error('请输入姓名'))
+            }   
+            else if(testId.test(value)){
+                callback()
+            }else{
+                callback(new Error('请正确输入姓名'))
+            }
         }
-      };
+        var validateId = (rule, value, callback) => {
+            let testId = /20[1-2][0-9]\d{8}/
+            if(value === ''){
+                callback(new Error('请输入学号'))
+            }   
+            else if(testId.test(value)){
+                callback()
+            }else{
+                callback(new Error('请正确输入学号'))
+            }
+        }
+        var validateReason = (rule, value, callback) => {
+            if(value === ''){
+                callback(new Error('请输入姓名哦'))
+            }else{
+                callback()
+            }
+        }
+        return {
+            labelPosition: 'left',
+            showInput:false,
+            showBtn :true,
+            status:3,
+            formLabelAlign: {
+                name: '',
+                id: '',
+                reason: ''
+            },
+            rules:{
+                name:[
+                    {validator:validateName, trigger:'blur'}
+                ],
+                id:[
+                    {validator:validateId, trigger:'blur'}
+                ],
+                reason:[
+                    {validator:validateReason, trigger:'blur'}
+                ]
+
+            }
+        };
     },
     methods:{
         showCetificateInput(){
@@ -64,10 +111,20 @@ export default {
             this.showBtn = !this.showBtn
 
         },
-        showCetificateBtn(){
-            this.showBtn = !this.showBtn
-            this.showInput = !this.showInput
-
+        showCetificateBtn(formName){
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    this.status = 0
+                    this.showBtn = !this.showBtn
+                    this.showInput = !this.showInput
+                    this.$message({
+                        message: '申请提交成功',
+                        type: 'success'
+                    });
+                } else {
+                    return false;
+                }
+            });
         }
 
     }
@@ -113,6 +170,7 @@ export default {
                     vertical-align bottom
             .certificate-container
                 padding 10px
+                vertical-align bottom
                 >h5
                     margin-block-start 0
                     margin-block-end 0
@@ -122,7 +180,7 @@ export default {
                 .certificate-btn
                     position relative
                     float right
-                    top -5px
+                    top 10px
             .certificateForm
                 position relative
                 width 50%

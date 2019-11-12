@@ -1,122 +1,49 @@
 <template>
-    <div class="content">
-        <div class="container">
-            <el-tabs type="border-card">
-                <el-tab-pane label="登录">
-                    <el-form label-position="right" :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                        <el-form-item label="手机号" prop="number">
-                            <el-input type="text" v-model="ruleForm.pass" autocomplete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item label="密码" prop="pass">
-                            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item>
-                            <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                            <el-button @click="resetForm('ruleForm')">重置</el-button>
-                        </el-form-item>
-                        </el-form>
-                </el-tab-pane>
-                <el-tab-pane label="注册">
-                    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-                    <el-form-item label="手机号" prop="pass">
-                        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
-                    </el-form-item>
-                    <el-form-item label="密码" prop="checkPass">
-                        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-                    </el-form-item>
-                    <el-form-item label="验证码" prop="age">
-                        <el-input class="telInput" v-model.number="ruleForm.age"></el-input>
-                        <el-button class="sendCode" type="primary" size="medium">发送验证码</el-button>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
-                        <el-button @click="resetForm('ruleForm')">重置</el-button>
-                    </el-form-item>
-                    </el-form>
-                </el-tab-pane>
-            </el-tabs>
+     <div class="content">
+      <div class="container">
+        <div>
+          <h2> 授权登录 </h2>
+          <div class="horizental" style="font-size:14px;color:#7d7d7d"> 一步之遥，成为社区里的你 </div>
+          <div>
+              <a href="https://graph.qq.com/oauth/show?which=Login&amp;display=pc&amp;response_type=code&amp;client_id=101536277&amp;redirect_uri=http://blog.swpuiot.com/login/qq" style="text-decoration-line: none">
+                  <img alt="" src="http://springforall.ufile.ucloud.com.cn/images/icon/qq.svg" style="max-width: 64px; max-height: 64px">
+              </a>
+          </div>
+          <h4  style="font-size:16px;color:#7d7d7d"> 赞助我们 </h4>
+          <div  style="text-align:center">
+            <a href="#" style="text-decoration-line: none">
+              <img alt="" src="http://blog.swpuiot.com/img/pay.jpg" style="max-width: 200px; max-height: 200px">
+            </a>
+          </div>
         </div>
+      </div>
     </div>
 </template>
 <script>
 export default {
-    name:'Login',
-    data() {
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
-      return {
-        ruleForm: {
-            number:'',
-          pass: '',
-          age: ''
-        },
-        rules: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ]
-        }
-      };
-    },
-    methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      }
-    }    
+    name:'Login'
 }
 </script>
 <style lang="stylus" scoped>
-    .content 
-        position relative
-        height 100vh
-        width 100vw
-        .container
-            position absolute
-            height 400px
-            width 500px
-            left 0
-            right 0
-            top 0
-            bottom 0
-            margin auto
-            .telInput
-              width 50%
-            .sendCode
-              margin-left 20px
-        .container >>>  .el-tabs__nav.is-top 
-              width auto 
-        .container >>> .el-tabs__item
-          margin 0
-          width 90px
-        .container >>> .el-tabs__item.is-active
-          border-radius 0
+.content
+    background-color #f4f5f5
+    position relative
+    top 80px
+    .container
+        text-align center
+        width 80%
+        margin 0 auto
+        color #000
+        @media screen and (max-width: 1200px) {
+            width: 100%;
+        }
+        h2
+          display block
+          font-size 2em
+          margin-block-start 0
+          margin-block-end 0
+        .horizental
+          padding 20px 0
+          margin 10px 0
+          border-bottom 1px solid #000
 </style>

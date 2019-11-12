@@ -6,7 +6,7 @@
         </div>
         <mavon-editor v-model="value" @change="change"></mavon-editor>
         <el-dialog title="发表博客" :visible.sync="dialogFormVisible">
-            <el-form  :model="form">
+            <el-form  :model="form" ref="form" :rules="rules">
                 <el-form-item label="文章标签：" :label-width="formLabelWidth">
                     <el-tag
                         :key="tag"
@@ -28,14 +28,14 @@
                     </el-input>
                     <el-button v-else class="button-new-tag" size="small" @click="showInput" v-show="_showtagBtn">+ 添加标签</el-button>
                 </el-form-item>
-                <el-form-item  class="inlineInput" label="文章类型：" :label-width="formLabelWidth" required="true">
+                <el-form-item  class="inlineInput" label="文章类型：" :label-width="formLabelWidth"  prop="type">
                     <el-select v-model="form.type" placeholder="请选择文章类型">
                         <el-option label="原创" value="原创"></el-option>
                         <el-option label="转载" value="转载"></el-option>
                         <el-option label="面经" value="面经"></el-option>                        
                     </el-select>
                 </el-form-item>
-                <el-form-item class="inlineInput" label="博客分类：" :label-width="formLabelWidth" required="true">
+                <el-form-item class="inlineInput" label="博客分类：" :label-width="formLabelWidth" prop="direction">
                     <el-select v-model="form.direction" placeholder="请选择博客分类">
                         <el-option label="前端" value="前端"></el-option>
                         <el-option label="后端" value="后端"></el-option>
@@ -47,7 +47,7 @@
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
                 <el-button @click="dialogFormVisible = false">保存为草稿</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false, publishBlog">确 定</el-button>
+                <el-button type="primary" @click="publishBlog('form')">确 定</el-button>
             </div>
         </el-dialog>
    
@@ -78,17 +78,31 @@ export default {
         formLabelWidth: '120px',
         dynamicTags: [],
         inputVisible: false,
-        inputValue: ''
+        inputValue: '',
+        rules: {
+          type: [
+            { required: true, message: '请选择文章类型', trigger: 'change' }
+          ],
+          direction: [
+            { required: true, message: '请选择博客分类', trigger: 'change' }
+          ],
+        }
     };
     },
     methods:{
         postArticle(){
             if(this.title == ''){
-                  this.$message({
+                this.$message({
                     type: 'info',
                     message: '题目不能为空'
                 });     
-            }else{
+            }else if(this.value == ''){
+                this.$message({
+                    type: 'info',
+                    message: '内容不能为空'
+                });  
+            }
+            else{
                 this.dialogFormVisible  = true
             }
         },
@@ -114,16 +128,24 @@ export default {
         this.inputVisible = false;
         this.inputValue = '';
       },
-      publishBlog(){
-          let params = new URLSearchParams();
-          params.append('title',this.title)
-          params.append('content',this.value)
-          params.append('contentHtml',this.html)
-          params.append('directionLabel',this.form.direction)
-          params.append('type',this.form.type)
-          params.append('attribute',this.dynamicTags)
-          axios.post('/publishBlog',params)
-          .then(this.publishBlogSucc)
+      publishBlog(formName){
+          this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.dialogFormVisible = false;
+            let params = new URLSearchParams();
+            params.append('title',this.title)
+            params.append('content',this.value)
+            params.append('contentHtml',this.html)
+            params.append('directionLabel',this.form.direction)
+            params.append('type',this.form.type)
+            params.append('attribute',this.dynamicTags)
+            axios.post('/publishBlog',params)
+            .then(this.publishBlogSucc)
+          } else {
+            return false;
+          }
+        });
+         
       },
       publishBlogSucc(res){
           res = res.data
@@ -144,9 +166,11 @@ export default {
     height  80vh
     padding 0 10px
     .title-box
+        display flex
         padding 5px 0
         .title-input
-            width 90%
+            flex 1 0
+            margin-right 10px
     .inlineInput
         display inline-block
         width 50%
@@ -156,7 +180,7 @@ export default {
         height 100%
         z-index 55
 .content >>> .el-input
-    margin-left 10px
+    /*margin-left 10px*/
 </style>
 <style>
   .el-tag + .el-tag {
@@ -174,4 +198,7 @@ export default {
     margin-left: 10px;
     vertical-align: bottom;
   }
+  .el-form-item__error {
+    margin-left: 10px;
+}
 </style>

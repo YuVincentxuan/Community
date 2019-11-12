@@ -17,25 +17,19 @@
                             :key="item.title"
                         >
                             <div>
-                                <router-link to="/user">
-                                    <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
-                                </router-link>
+                                <!-- <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.header"></el-avatar> -->
                                 <div class="author-info">
-                                    <router-link to="/article">
-                                        <span class="title">{{item.titile}}</span>
-                                    </router-link>
+                                    <span @click="goToArticle(item.articleId)" class="title">{{item.titile}}</span>
                                     <span class="author-time">
-                                        <a  
-                                        v-for="tag in item.items"
-                                        :key="tag.label">
                                             <el-tag
+                                             v-for="tag in item.items"
+                                                :key="tag.label"
                                                 class="article-tag"
                                             
                                                 type="danger"
                                                 effect="dark">
                                                 {{ tag.label }}
                                             </el-tag>
-                                        </a>
                                     </span>
                                 </div>
                             </div>
@@ -209,6 +203,9 @@ export default {
                 console.log(res)
                 this.articles = res.data.list
             }
+        },
+        goToArticle(id){
+            this.$router.push('/article/'+id)
         }
     },
     mounted(){

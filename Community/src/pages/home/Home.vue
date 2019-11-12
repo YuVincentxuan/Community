@@ -4,7 +4,7 @@
         <el-carousel-item v-for="(item,index) in images" :key="index">
           <div class="title">
             <div class="title-item">
-              <h3 class="small">{{item.titles}}</h3>
+              <h3 class="small">{{item.direction}}</h3>
 
             </div>
           </div>
@@ -12,15 +12,18 @@
             class="image"
             fit="cover"
             style="width: 100%; height: 100%"
-            :src="item.imgs"
+            :src="item.imageUrl"
+            @click.native="goToUrl(item.articleUrl)"
           >
           </el-image>
+      
         </el-carousel-item>
       </el-carousel>
       <home-article></home-article>
     </div>
 </template>
 <script>
+import axios from 'axios'
 import HomeArticle from './components/Article'
 export default {
     name:'Home',
@@ -29,19 +32,7 @@ export default {
     },
     data(){
       return{
-        images:[{
-          imgs:'https://ae01.alicdn.com/kf/Hc5db71654f844faa91db3e28fd83dfc7W.jpg',
-          titles:'前端'},
-          {
-          imgs:'https://pic.superbed.cn/item/5d9b3400451253d178f23d10.jpg',
-          titles:'后端'},
-          {
-          imgs:'https://pic.superbed.cn/item/5d9aeff7451253d178e9bca2.jpg',
-          titles:'嵌入式'},
-          {
-          imgs:'https://ae01.alicdn.com/kf/H50c11d0a714c45019af061be843ddebdm.jpg',
-          titles:'安卓'}
-        ],
+        images:[],
        
       }
     },
@@ -53,6 +44,24 @@ export default {
             return '400px'
           }
       }
+    },
+    methods:{
+      goToUrl(url){
+        this.$router.push(url)
+      },
+      getFourImage(){
+        axios.get('http://blog.swpuiot.com/getFourImage')
+        .then(this.getFourImageSucc)
+      },
+      getFourImageSucc(res){
+        res = res.data
+        if(res.code == 200){
+          this.images = res.data
+        }
+      }
+    },
+    mounted() {
+      this.getFourImage()
     },
 }
 </script>
@@ -98,7 +107,7 @@ title-item{
   width 100%
   position absolute
   line-height 28px;
-  color: #fff;
+  color: #409eef;
   font-size: 28px;
   left 0
   right 0

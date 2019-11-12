@@ -25,6 +25,7 @@
                         prefix-icon="el-icon-search"
                         v-model="searchInput"
                         clearable
+                        @keyup.enter.native = "searchArticles"
                     >
                     </el-input>
                 </div>
@@ -35,13 +36,9 @@
                         :key="item.title"
                     >
                         <div>
-                            <router-link to="/user">
-                                <el-avatar class="header-img" :size="50" :src="item.headimg"></el-avatar>
-                            </router-link>
+                            <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.headimg"></el-avatar>
                             <div class="author-info">
-                            <router-link to="/article">
-                                <span class="title">{{item.title}}</span>
-                            </router-link>
+                            <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
                             <span class="author-time">
                                   <a>
                                     <el-tag
@@ -76,12 +73,17 @@
                             <span class="sm-tag">阅读 {{item.read}}</span>
                             <span class="sm-tag">评论 {{item.comment}}</span>
                             <span class="sm-tag">喜欢 {{item.like}}</span>
-                            <span class="sm-tag">{{createTime}}</span>
+                            <span class="sm-tag">{{dateStr(item.createTime)}}</span>
                         </div>
                     </li>
                 </ul>
-                <div class="more">
-                    <el-button type="primary" class="clickMore" @click="morePage">点击加载更多</el-button>
+                <div class="more" v-show="allOrHot == 'all'">
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!=1" @click="all_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="all_goToPage(1)">下一页</el-button>
+                </div>
+                <div class="more"  v-show="allOrHot == 'hot'">
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
@@ -154,11 +156,13 @@ export default {
         return{
             searchInput:'',
             activeName:0,
-            PageNum:1,
+            allPageNum:1,
+            hotPageNum:1,
             rows:10,
             articles:[],
             authorList:[],
-            experienceArticles:[]
+            experienceArticles:[],
+            allOrHot:'all'
         //     articles:[
         //         {
         //             title:'这是我的第一篇文章',
@@ -258,12 +262,39 @@ export default {
         }
     },
     methods:{
+         dateStr(date){
+            //获取js 时间戳
+            var time=new Date().getTime();
+            //去掉 js 时间戳后三位，与php 时间戳保持一致
+            time=parseInt((time-date)/1000);
+            //存储转换值 
+            var s;
+            if(time<60*10){//十分钟内
+                return '刚刚';
+            }else if((time<60*60)&&(time>=60*10)){
+                //超过十分钟少于1小时
+                s = Math.floor(time/60);
+                return  s+"分钟前";
+            }else if((time<60*60*24)&&(time>=60*60)){ 
+                //超过1小时少于24小时
+                s = Math.floor(time/60/60);
+                return  s+"小时前";
+            }else if((time<60*60*24*30)&&(time>=60*60*24)){ 
+                //超过1天少于30天内
+                s = Math.floor(time/60/60/24);
+                return s+"天前";
+            }else{ 
+                //超过30天ddd
+                var date= new Date(parseInt(date));
+                return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
+            }
+        },
         getListArticles(){
+            this.allOrHot = 'all'
             let params = new URLSearchParams();
-            params.append('pageNum',this.pageNum)
+            params.append('pageNum',this.allPageNum)
             params.append('rows', this.rows)
-            // axios.post('/getListArticles',params)
-            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getListArticles')
+            axios.post('http://blog.swpuiot.com/getListArticles',params)
             .then(this.getListArticlesSucc)
         },
         getListArticlesSucc(res){
@@ -273,7 +304,11 @@ export default {
             }
         },
         getPopularArticles(){
-            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getPopularArticles')
+            this.allOrHot = 'hot'
+            let params = new URLSearchParams();
+            params.append('pageNum',this.hotPageNum)
+            params.append('rows', this.rows)
+            axios.post('http://blog.swpuiot.com/getPopularArticles',params)
             // axios.post('/getPopularArticles')
             .then(this.getPopularArticlesSucc)
         },
@@ -284,18 +319,17 @@ export default {
             }
         },
         getExperienceArticle(){
-            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getInterviewExperienceArticles')
+            axios.post('http://blog.swpuiot.com/getInterviewExperienceArticles')
             .then(this.getExperienceArticleSucc)
         },
         getExperienceArticleSucc(res){
             res = res.data
             if(res.code == 200){
                 this.experienceArticles = res.data
-                console.log(thsi.experienceArticles)
             }
         },
         getAllAuthors(){
-            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/getAllAuthors')
+            axios.post('http://blog.swpuiot.com/getAllAuthors')
             .then(this.getAllAuthorsSucc)
         },
         getAllAuthorsSucc(res){
@@ -304,10 +338,42 @@ export default {
                 this.authorList = res.url
             }
         },
-        morePage(){
-            this.pageNum += 1
-            this.getListArticles()
-        }
+        searchArticles(){
+            axios.get('http://blog.swpuiot.com/getPartArticles?value='+this.searchInput+'&pageNum='+this.hotPageNum+'&rows='+this.rows)
+            .then(this.searchArticlesSucc)
+        },
+        searchArticlesSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.articles = res.data
+            }
+        },
+        all_goToPage(data){
+            if(data == -1 && this.allPageNum+data <= 0){
+                this.$message.warning('已经是第一页了')
+            }else if(data == 1 && this.allPageNum+data >= this.articles.pageNum){
+                this.$message.warning('已经是最后一页了')
+            }else{
+                this.allPageNum = this.allPageNum+data
+                this.getListArticles()
+            }
+        },
+        hot_goToPage(data){
+            if(data == -1 && this.hotPageNum+data <= 0){
+                this.$message.warning('已经是第一页了')
+            }else if(data == 1 && this.hotPageNum+data >= this.articles.pageNum){
+                this.$message.warning('已经是最后一页了')
+            }else{
+                this.hotPageNum = this.hotPageNum+data
+                this.getListArticles()
+            }
+        },
+        goToArticle(id){
+            this.$router.push('/article/'+id)
+        },
+        goToUser(id){
+            this.$router.push('/user/'+id)
+        },
     },
     mounted(){
         this.getListArticles()
@@ -360,6 +426,7 @@ export default {
                 font-size 20px
                 @media screen and (max-width: 1200px) {
                     font-size 16px
+                    margin 0
                 }
             .card-text
                 margin-top 5px 

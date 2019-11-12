@@ -84,7 +84,7 @@ export default {
     },
     methods:{
         readPassage(){
-            axios.post('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/readPassage')
+            axios.post('http://blog.swpuiot.com/readPassage')
             .then(this.readPassageSucc)
         },
         readPassageSucc(res){

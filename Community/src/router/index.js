@@ -41,12 +41,12 @@ export default new Router({
       component:Message
     },
     {
-      path:'/user',
+      path:'/user/:id',
       name:'User',
       component:User
     },
     {
-      path:'/article',
+      path:'/article/:id',
       name:'Article',
       component:Article
     },

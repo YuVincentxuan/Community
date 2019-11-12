@@ -9,8 +9,8 @@
             </el-col>
             <el-col :xs="13" :sm="20" :md="20" :lg="20" class="offcanvas-collapse">
                 <el-col :xs="18" :sm="18" :md="15" :lg="18">
-                    <el-menu :default-active="this.$router.path" class="el-menu-demo" router mode="horizontal">
-                        <el-menu-item v-for="(item,i) in navList" :key="i" :index="item.name">
+                    <el-menu :default-active="this.$router.path || '/'" class="el-menu-demo" router mode="horizontal">
+                        <el-menu-item v-for="(item,i) in navList" v-show="item.show" :key="i" :index="item.name">
                             {{item.navItem}}
                         </el-menu-item>
                     </el-menu>
@@ -18,19 +18,20 @@
                 <el-col :xs="6" :sm="6" :md="8" :lg="7" class="rightNav">
                     <div>
                         <router-link to="/write">
-                        <el-button class="follow-btn" size="mini" type="success">写博客</el-button>
+                            <el-button class="follow-btn" size="mini" type="success">写博客</el-button>
                         </router-link>
                     </div>
                     <div class="lo-re-box">
-                        <router-link to="/login" v-if="true">登录</router-link>
+                        <router-link to="/login" v-if="false">登录</router-link>
                         <div class="isLogin" v-else>
                             <img :src="this.$store.state.myHeaderImg" >
                             <el-dropdown trigger="click">
                                 <span class="el-dropdown-link">
-                                    <span class="username">{{}}</span> <i class="el-icon-arrow-down el-icon--right"></i>
+                                    <span class="username">{{this.$store.state.myName}}</span> <i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item><span @click="loginOut">注销</span></el-dropdown-item>
+                                <el-dropdown-menu slot="dropdown" style="text-align:center">
+                                    <el-dropdown-item><router-link to="/center" tag="span">个人中心</router-link></el-dropdown-item>
+                                    <el-dropdown-item><span>注销</span></el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </div>
@@ -49,19 +50,21 @@
                     :visible.sync="drawer"
                     direction="ltr"
                     size="50%"
+                    style="text-align:center"
                     >
+                    <router-link to="/login" v-if="true" >登录</router-link>
+                    <div class="isLogin" v-else>
+                        <img :src="this.$store.state.myHeaderImg" >
+                        <span>注销</span>
+                    </div>
                     <el-menu :default-active="this.$router.path" class="el-menu-demo" router mode="horizontal">
                         <el-menu-item v-for="(item,i) in navList" :key="i" :index="item.name">
                             {{item.navItem}}
                         </el-menu-item>
                     </el-menu>
-
-
                 </el-drawer>
-
             </el-col>         
         </el-row>
-        
     </header>
 </template>
 <script>
@@ -74,10 +77,10 @@ export default {
         searchCont:'',
         drawer: false,
         navList:[
-            {name:'/',navItem:'首页'},
-            {name:'/center',navItem:'个人中心'},
-            {name:'/admin',navItem:'管理员'},
-            {name:'/question',navItem:'问答'}
+            {name:'/',navItem:'首页',show:true},
+            {name:'/center',navItem:'个人中心',show:false},
+            {name:'/admin',navItem:'管理员',show:true},
+            {name:'/question',navItem:'问答',show:true}
         ]
       }
     },
@@ -198,6 +201,31 @@ span.nav-on{
         vertical-align middle
         font-size 25px
         padding 5px 10px
+    }
+    .el-menu--horizontal>.el-menu-item {
+        float none 
+        text-align center
+        border none
+    }
+    .el-menu-item.is-active {
+        color #409EFF !important 
+    }
+    .isLogin{
+        display flex
+        flex-direction column
+        align-items center
+        justify-content center
+        font-size 14px
+        color #000
+        margin 10px 0
+    }
+    .isLogin img{
+        width 50px
+        border-radius 50%
+        margin-right 0
+    }
+    .isLogin span{
+        margin 5px 0
     }
 }
 </style>

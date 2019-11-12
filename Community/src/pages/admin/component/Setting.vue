@@ -5,26 +5,27 @@
                 <span>首页幻灯展示</span>
                 <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
             </div>
-            <div class="block">
+            <div class="block" >
                 <el-carousel trigger="click">
                     <el-carousel-item v-for="(item,index) in image" :key="index" >
                         <el-upload
-                            :limit="1"
                             class="upload"
+                            :limit="1"
                             action="#"
-                            :show-file-list="false"
-                            :auto-upload="false"
-                            :on-change="handleChange"
-                            :before-upload="beforUpload">
-                                <div class="uploadBtn" @click="clickCarousel(index)" >
-                                    <i slot="default" class="el-icon-plus "></i>
-                                </div>
+                            list-type="picture-card"
+                            :auto-upload="false">
+                        <i slot="default" class="el-icon-plus"></i>
+                            <!-- <div v-show="false" :index="index" slot="file" slot-scope="{file}">
+                                {{changeImg(file.url)}}
+                            </div> -->
+                            <div class="uploadBtn" @click="clickCarousel(index)"></div>
                         </el-upload>
                         <h3 class="small">余文轩</h3>
                         <el-image class="image"
                             fit="cover"
                             style="width: 100%; height: 100%"
                             :src="item"
+        
                         >
                         </el-image>  
                     </el-carousel-item>
@@ -33,9 +34,10 @@
         </el-card>
         <el-image class="image"
             fit="cover"
-            style="width: 300px; height: 100px"
+            style="width: 100px; height: 100px"
             :src="item"
-        > </el-image> 
+        >
+        </el-image>  
     </div>
 </template>
 <script>
@@ -68,27 +70,23 @@ export default {
     },
     methods: {
         handleRemove(file) {
-            console.log(file);
         },
         handlePictureCardPreview(file) {
             this.dialogImageUrl = file.url;
             this.dialogVisible = true;
         },
         handleDownload(file) {
-            console.log(file);
+
         },
         uploadSucc(res,file,fileList,index){
-            console.log(res)
-            console.log(file)
-            console.log(index)
+
         },
         beforUpload(file,index){
-            console.log(file)
-            console.log(index)
+
         },
         handleChange(file, fileList) {
+            
             let index = this.activeIndex
-            console.log( fileList) 
             if (window.FileReader) {
                 var reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -96,8 +94,7 @@ export default {
                     // console.log(123)
 
                 reader.onloadend= function (e) {
-                    console.log(123)
-                    console.log( e.target.result)
+
                     this.image[index] = e.target.result   //e.target.result就是最后的路径地址
                 };
             }
@@ -107,12 +104,20 @@ export default {
             this.activeIndex = index
             console.log(this.image)
         },
-        
+        changeImg(src){
+            console.log(src)
+            let index = this.activeIndex 
+            console.log(index)
+            this.image[index] = src
+            this.item = src
+            console.log( this.image[index] )
+           
+        }
     
-    },
-    mounted () {
-        this.numberGrow(this.$refs.numberGrow)
-  }
+    }
+//     mounted () {
+//         this.numberGrow(this.$refs.numberGrow)
+//   }
 }
 </script>
 <style lang="stylus" scoped>
@@ -163,6 +168,8 @@ export default {
     width 100%
 }
 .uploadBtn{
+    position relative
+    z-index 9999
     width 100%
     height 100%
 }
