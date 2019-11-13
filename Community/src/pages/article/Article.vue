@@ -10,7 +10,8 @@
                                 <span class="author-name">{{this.authorName}}</span>
                                 <span class="author-time">{{this.date}} 阅读量 {{this.read}}</span>
                             </div>
-                            <el-button class="follow-btn" size="mini" type="success">已关注</el-button>
+                            <el-button class="follow-btn" v-if="this.flag==0" @click="followBtn" size="mini" type="success">+ 关注</el-button>
+                            <el-button class="follow-btn" v-else @click="followBtn" size="mini" type="success">取消关注</el-button>
                         </div>
                         <h1>{{this.title}}</h1>
                         <article class="article" v-html="content">
@@ -36,8 +37,9 @@
                                 <span class="author-sign" title="我是一个没有感情的code killer">我是一个没有感情的code killer</span>
                             </div>
                             <div class="author-data">
-                                <span class=""><i class="data-icon el-icon-star-on"></i>点赞 15</span>
-                                <span class=""><i class="data-icon el-icon-s-order"></i>文章 1</span>
+                                <span class=""><i class="data-icon el-icon-star-on"></i>关注 {{attention}}</span>
+                                <span class=""><i class="data-icon el-icon-star-on"></i>粉丝 {{fans}}</span>
+                                <span class=""><i class="data-icon el-icon-s-order"></i>文章 {{articleNum}}</span>
                             </div>
                            
                         </div>
@@ -79,7 +81,12 @@ export default {
             date:'',
             headImg:'',
             authorName:'',
-            articleList:[]
+            author:'',
+            articleList:[],
+            flag: 0,
+            articleNum:0, 
+            attention :0,
+            fans:0
         }
     },
     methods:{
@@ -93,6 +100,7 @@ export default {
             {   
                 this.title = res.title
                 this.authorName = res.authorName
+                this.author = res.author
                 this.headImg = res.headImg
                 this.date = res.date
                 this.read = res.read
@@ -100,10 +108,34 @@ export default {
                 this.comment = res.comment
                 this.articleList = res.articleList
             }
-        }
+        },
+        getInformation(){
+            axios.get('http://blog.swpuiot.com/information?rows=4&pageNum=1')
+            .then(this.getInformationSucc)
+        },
+        getInformationSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.flag = res.flag
+                this.articleNum = res.articleNum
+                this.attention = res.attention
+                this.fans = res.fans
+            }
+        },
+        followBtn(){
+            axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author+'')
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.flag = res.flag
+                }
+            })
+            // this.flag = this.flag == 0 ? 1 : 0
+        },
     },
     mounted(){
         this.readPassage()
+        this.getInformation()
     }
 }
 </script>

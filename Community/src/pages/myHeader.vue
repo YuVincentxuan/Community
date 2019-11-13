@@ -22,7 +22,7 @@
                         </router-link>
                     </div>
                     <div class="lo-re-box">
-                        <router-link to="/login" v-if="false">登录</router-link>
+                        <router-link to="/login" v-if="this.isLogin == false">登录</router-link>
                         <div class="isLogin" v-else>
                             <img :src="this.$store.state.myHeaderImg" >
                             <el-dropdown trigger="click">
@@ -52,7 +52,7 @@
                     size="50%"
                     style="text-align:center"
                     >
-                    <router-link to="/login" v-if="true" >登录</router-link>
+                    <router-link to="/login" v-if="this.isLogin == false" >登录</router-link>
                     <div class="isLogin" v-else>
                         <img :src="this.$store.state.myHeaderImg" >
                         <span>注销</span>
@@ -68,11 +68,13 @@
     </header>
 </template>
 <script>
+import axios from 'axios'
 export default {
     name:'Header',
     data() {
       return {
         activeIndex: '1',
+        isLogin:false,
         navActive:false,
         searchCont:'',
         drawer: false,
@@ -87,6 +89,17 @@ export default {
     methods: {
       handleSelect(key, keyPath) {
         console.log(key, keyPath);
+      },
+      getInformation(){
+        axios.get('http://blog.swpuiot.com/user/information')
+        .then(res => {
+            res = res.data
+            if(res.code == 200){
+                this.isLogin = true
+                this.$store.commit('change_myHeaderImg', res.headimg)
+                this.$store.commit('change_myName', res.userName)
+            }
+        })
       }
     }
 }

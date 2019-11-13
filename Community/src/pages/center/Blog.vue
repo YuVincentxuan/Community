@@ -22,13 +22,13 @@
                                     <span @click="goToArticle(item.articleId)" class="title">{{item.titile}}</span>
                                     <span class="author-time">
                                             <el-tag
-                                             v-for="tag in item.items"
+                                             v-for="tag in item.tags"
                                                 :key="tag.label"
                                                 class="article-tag"
                                             
                                                 type="danger"
                                                 effect="dark">
-                                                {{ tag.label }}
+                                                {{ tag }}
                                             </el-tag>
                                     </span>
                                 </div>
@@ -37,11 +37,11 @@
                                 <span class="sm-tag">阅读 {{item.read}}</span>
                                 <span class="sm-tag">评论 {{item.comment}}</span>
                                 <span class="sm-tag">喜欢 {{item.like}}</span>
-                                <span class="sm-tag">{{item.time}}</span>
+                                <span class="sm-tag">{{dateStr(item.time)}}</span>
                             </div>
                             <div class="btn-box">
-                                <el-button type="info" size="mini" plain>编辑</el-button>
-                                <el-button type="danger" size="mini" @click="deleteRow(i)" plain>删除</el-button>
+                                <el-button type="info" size="mini" @click="edit(item.articleId)" plain>编辑</el-button>
+                                <el-button type="danger" size="mini" @click="deleteRow(i,item.articleId)" plain>删除</el-button>
                             </div>
                         </li>
                     </ul>
@@ -51,7 +51,7 @@
                         @prev-click="handlePrevClick"
                         @next-click="handleNextClick"
                         layout="prev, pager, next"
-                        :total="100">
+                        :total="this.totalSize">
                     </el-pagination>
                     </div>
                 </el-col>
@@ -71,6 +71,7 @@ export default {
         return{
             rows:10,
             pageNum:1,
+            totalSize:0,
             searchInput:'',
             activeName:0,
             articles:[
@@ -172,17 +173,51 @@ export default {
         }
     },
     methods: {
-        deleteRow(index) {
+        dateStr(date){
+            //获取js 时间戳
+            var time=new Date().getTime();
+            //去掉 js 时间戳后三位，与php 时间戳保持一致
+            time=parseInt((time-date)/1000);
+            //存储转换值 
+            var s;
+            if(time<60*10){//十分钟内
+                return '刚刚';
+            }else if((time<60*60)&&(time>=60*10)){
+                //超过十分钟少于1小时
+                s = Math.floor(time/60);
+                return  s+"分钟前";
+            }else if((time<60*60*24)&&(time>=60*60)){ 
+                //超过1小时少于24小时
+                s = Math.floor(time/60/60);
+                return  s+"小时前";
+            }else if((time<60*60*24*30)&&(time>=60*60*24)){ 
+                //超过1天少于30天内
+                s = Math.floor(time/60/60/24);
+                return s+"天前";
+            }else{ 
+                //超过30天ddd
+                var date= new Date(parseInt(date));
+                return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
+            }
+        },
+        deleteRow(index,id) {
             this.$confirm('此操作将永久删除该博客, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.articles.splice(index, 1);
-                this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                });
+                axios.get('http://blog.swpuiot.com/deleArticle?articleId='+id+'')
+                .then(res => {
+                    res = res.data
+                    if(res.code == 200){
+                        this.articles.splice(index, 1);
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                    }
+                })
+               
             }).catch(() => {
                 this.$message({
                     type: 'info',
@@ -190,22 +225,42 @@ export default {
                 });          
             });
         },
+        edit(id){
+
+        },
         getUserArticles(){
             let params = new URLSearchParams();
             params.append('pageNum',this.pageNum)
             params.append('rows', this.rows)
-            axios.get('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/user/articles')
+            axios.get('http://blog.swpuiot.com/user/articles',params)
             .then(this.getUserArticlesSucc)
         },
         getUserArticlesSucc(res){
             res = res.data
             if(res.code == 200){
                 console.log(res)
-                this.articles = res.data.list
+                this.articles = res.data
+                this.totalSize = res.totalSize
             }
         },
         goToArticle(id){
             this.$router.push('/article/'+id)
+        },
+        handlePrevClick(){
+            if(this.currentPage >0 && this.currentPage<this.totalPage){
+                this.currentPage -=1
+                this.getArticle()
+            }
+        },
+        handleNextClick(){
+            if(this.currentPage >0 && this.currentPage<this.totalPage){
+                this.currentPage +=1
+                this.getArticle()
+            }
+        },
+        handleCurrentChange(val){
+            this.currentPage = val
+            this.getArticle()
         }
     },
     mounted(){

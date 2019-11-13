@@ -424,6 +424,7 @@ export default {
                 vertical-align top
                 color black
                 font-size 20px
+                margin 0 !important
                 @media screen and (max-width: 1200px) {
                     font-size 16px
                     margin 0
