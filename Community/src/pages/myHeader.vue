@@ -3,7 +3,7 @@
         <el-row>
             <el-col :xs="10" :sm="3" :md="3" :lg="3" :offset="1">
                 <div class="header">
-                    <img src="../assets/wingling.png" alt="">
+                    <img src="/assets/wingling.png" alt="">
                     <h1>翼灵社区</h1>
                 </div>
             </el-col>
@@ -101,6 +101,9 @@ export default {
             }
         })
       }
+    },
+    mounted(){
+        this.getInformation()
     }
 }
 </script>
@@ -110,7 +113,7 @@ header{
     background: white;
     width: 100%;
     position: fixed;
-    z-index:100;
+    z-index:1600;
 }
 .header,.lo-re-box,.rightNav{
     display: flex;

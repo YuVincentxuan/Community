@@ -8,36 +8,28 @@
             <div class="block" >
                 <el-carousel trigger="click">
                     <el-carousel-item v-for="(item,index) in image" :key="index" >
-                        <el-upload
-                            class="upload"
-                            :limit="1"
-                            action="#"
-                            list-type="picture-card"
-                            :auto-upload="false">
-                        <i slot="default" class="el-icon-plus"></i>
-                            <!-- <div v-show="false" :index="index" slot="file" slot-scope="{file}">
-                                {{changeImg(file.url)}}
-                            </div> -->
-                            <div class="uploadBtn" @click="clickCarousel(index)"></div>
-                        </el-upload>
-                        <h3 class="small">余文轩</h3>
+                        <div class="upload">
+                            <input class="upload" type="file" @change="getFile($event, index)" style="opacity:0;" />
+                            <div class="upload-btn">
+                                <i class="el-icon-picture-outline upload-btn-item"></i>
+                            </div>
+                        </div>
+                        <!-- <h3 class="small">余文轩</h3> -->
                         <el-image class="image"
                             fit="cover"
                             style="width: 100%; height: 100%"
                             :src="item"
-        
                         >
                         </el-image>  
+                    
                     </el-carousel-item>
                 </el-carousel>
+
+                
+        
+            
             </div>
         </el-card>
-        <el-image class="image"
-            fit="cover"
-            style="width: 100px; height: 100px"
-            :src="item"
-        >
-        </el-image>  
     </div>
 </template>
 <script>
@@ -50,12 +42,14 @@ export default {
         disabled: false,
         activeIndex: 0,
         item:'',
+        dataUrl:'',
         image:[
             'https://ae01.alicdn.com/kf/Hc5db71654f844faa91db3e28fd83dfc7W.jpg',
             'https://pic.superbed.cn/item/5d9b3400451253d178f23d10.jpg',
             'https://pic.superbed.cn/item/5d9aeff7451253d178e9bca2.jpg',
             'https://ae01.alicdn.com/kf/H50c11d0a714c45019af061be843ddebdm.jpg'
-        ]
+        ],
+        uploadImg:''
       }
     },
     props: {
@@ -69,51 +63,19 @@ export default {
         }
     },
     methods: {
-        handleRemove(file) {
-        },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
-        },
-        handleDownload(file) {
-
-        },
-        uploadSucc(res,file,fileList,index){
-
-        },
-        beforUpload(file,index){
-
-        },
-        handleChange(file, fileList) {
-            
-            let index = this.activeIndex
-            if (window.FileReader) {
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                //监听文件读取结束后事件
-                    // console.log(123)
-
-                reader.onloadend= function (e) {
-
-                    this.image[index] = e.target.result   //e.target.result就是最后的路径地址
-                };
+        getFile(el, index){
+            let file= el.target.files[0]
+            var reader = new FileReader();
+            const windowURL = window.URL || window.webkitURL;
+            this.image[index] = windowURL.createObjectURL(file);
+            var img = document.getElementsByClassName('image');
+            img[index].getElementsByTagName('img')[0].src = windowURL.createObjectURL(file)
+            console.log(img[index].getElementsByTagName('img'))
+            reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
+            reader.onload = function(event){
+                let base64 = event.target.result;//base64
             }
-            
-        },
-        clickCarousel(index){
-            this.activeIndex = index
-            console.log(this.image)
-        },
-        changeImg(src){
-            console.log(src)
-            let index = this.activeIndex 
-            console.log(index)
-            this.image[index] = src
-            this.item = src
-            console.log( this.image[index] )
-           
-        }
-    
+        }  
     }
 //     mounted () {
 //         this.numberGrow(this.$refs.numberGrow)
@@ -157,6 +119,15 @@ export default {
     background-color rgba(0,0,0,0)
     height 100%
     width 100%
+}
+.upload-btn{
+    text-align center
+    height 100%
+    line-height 300px
+}
+.upload-btn-item{
+    font-size 50px
+    color #409EFF
 }
 .el-upload--picture-card{
     background-color rgba(0,0,0,0) !important 

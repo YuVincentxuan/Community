@@ -11,9 +11,13 @@ import Write from '../pages/write/Write'
 import Login from '../pages/login/Login'
 import Admin from '../pages/admin/Admin'
 import Question from '../pages/question/Question'
+import Direction from '../pages/direction/Direction'
+import Label from '../pages/label/Label'
+
 Vue.use(Router)
 
 export default new Router({
+  mode:'history',
   routes: [
     {
       path: '/',
@@ -69,6 +73,16 @@ export default new Router({
       path:'/question',
       name:'Question',
       component:Question
+    },
+    {
+      path:'/direction',
+      name:'Direction',
+      component:Direction
+    },
+    {
+      path:'/label',
+      name:'Label',
+      component:Label
     }
   ]
 })

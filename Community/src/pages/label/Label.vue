@@ -1,18 +1,24 @@
 <template>
 <div class="main">
-    <!-- <div class="carousel">
-        <el-row  :gutter="10">
-            <el-col :xs="24" :sm="24" :md="4" :lg="4" :xl="4">
-                <div class="grid-content bg-purple"></div>
-            </el-col>
-            <el-col :xs="24" :sm="24" :md="14" :lg="14" :xl="14">
-                <div class="grid-content bg-purple-light"></div>
-            </el-col>
-            <el-col :xs="24" :sm="24" :md="6" :lg="6" :xl="6">
-                <div class="grid-content bg-purple-light"></div>
-            </el-col>
-        </el-row>
-    </div> -->
+    <el-carousel :interval="4000" trigger="click" type="card" :height="_height">
+        <el-carousel-item v-for="(item,index) in images" :key="index">
+          <div class="title">
+            <div class="title-item">
+              <h3 class="small">{{item.direction}}</h3>
+
+            </div>
+          </div>
+          <el-image 
+            class="image"
+            fit="cover"
+            style="width: 100%; height: 100%"
+            :src="item.imageUrl"
+            @click.native="goToUrl(item.articleUrl)"
+          >
+          </el-image>
+      
+        </el-carousel-item>
+    </el-carousel>
     <div class="container">
         <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
@@ -35,7 +41,6 @@
                         class="article-item"
                         v-for="item in articles"
                         :key="item.title"
-                        v-else
                     >
                         <div>
                             <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.headimg"></el-avatar>
@@ -44,26 +49,20 @@
                             <span class="author-time">
                                     <el-tag
                                         class="article-tag"
-                                        type="danger"
-                                        effect="dark"
-                                        @click="goToDirection(item.directionLabel)"
-                                        >
-                                        {{ item.directionLabel }}
-                                    </el-tag>
-                                    <el-tag
-                                        class="article-tag"
                                         type="success"
                                         effect="dark">
                                         {{ item.type }}
                                     </el-tag>
-                                    <el-tag v-for="(tag,i) in item.attributeLabel" :key="i"
+                                <a  
+                                v-for="(tag,i) in item.attributeLabel"
+                                :key="i">
+                                    <el-tag
                                         class="article-tag"
                                         type=""
-                                        effect="dark"
-                                         @click="goToLabel(item.directionLabel)"
-                                        >
+                                        effect="dark">
                                         {{ tag }}
                                     </el-tag>
+                                 </a>
                             </span>
                         </div>
                         </div>
@@ -87,16 +86,19 @@
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
                 <div class="rt-box hot-tag">
                     <div class="rt-box-header">
-                        <h3><i class="header-icon el-icon-s-flag"></i>热门标签</h3>
+                        <h3><i class="header-icon el-icon-s-flag"></i>所有标签</h3>
                     </div>
                     <div class="rt-box-body">
                         <ul class="tag-list">
                             <li class="tag-list-item">
+                                <a>
                                     <el-tag
                                     type="success"
                                     effect="dark">
                                     前端
                                     </el-tag>
+                                </a>
+                            
                             </li>
                         </ul>
                     </div>
@@ -107,22 +109,16 @@
                     </div>
                     <div class="rt-box-body">
                         <list-loader v-if="isListLoading"></list-loader>
-                        <el-collapse v-else v-model="activeName" accordion>
-                            <el-collapse-item
-                                class="author-list"
+                            <div
+                                class="header-img-box"
                                 v-for="(author,index) in authorList"
                                 :key="index"
-                                :title="(index+1) +'.'+author.name" :name="index">
+                                :title="(index+1) +'.'+author.name" :name="index"
+                            >
                                 <router-link :to="author.homePageUrl">
                                     <el-avatar class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
-                                 </router-link>
-                                <div class="author-des">
-                                    <span>文章：{{author.articlesNum}}</span>
-                                    <span>粉丝：{{author.fansNum}}</span>
-                                </div>
-                                
-                            </el-collapse-item>
-                        </el-collapse>
+                                </router-link>
+                            </div>
                     </div>
                 </div>
                 <div class="rt-box experience">
@@ -131,7 +127,7 @@
                     </div>
                     <div class="rt-box-body">
                         <list-loader v-if="isExpLoading"></list-loader>
-                        <ul v-else class="ex-list" 
+                        <ul class="ex-list" 
                             v-for="(articles,index) in experienceArticles"
                             :key="index">
                             <router-link to="/article" tag="li" :title="'作者:'+articles.authorname" class="ex-item">
@@ -147,10 +143,10 @@
 </template>
 <script>
 import axios from 'axios'
-import ArticleLoader from '../../../pages/loader/ArticleLoader'
-import ListLoader from '../../../pages/loader/ListLoader'
+import ArticleLoader from '../../pages/loader/ArticleLoader'
+import ListLoader from '../../pages/loader/ListLoader'
 export default {
-    name:'HomeArticle',
+    name:'Label',
     components:{
         ArticleLoader,
         ListLoader
@@ -305,12 +301,9 @@ export default {
         },
         getListArticlesSucc(res){
             res = res.data
+            this.isArticleLoading = false
             if(res.code == 200){
                 this.articles = res.data
-                 timer = setTimeout(() => {
-                   this.isArticleLoading = false  
-                },500)
-                clearTimeout(timer)
             }
         },
         getPopularArticles(){
@@ -334,12 +327,9 @@ export default {
         },
         getExperienceArticleSucc(res){
             res = res.data
+            this.isExpLoading = false
             if(res.code == 200){
                 this.experienceArticles = res.data
-                 timer = setTimeout(() => {
-                    this.isExpLoading = false
-                },500)
-                clearTimeout(timer)
             }
         },
         getAllAuthors(){
@@ -348,12 +338,9 @@ export default {
         },
         getAllAuthorsSucc(res){
             res = res.data
+            this.isListLoading = false
             if(res.code == 200){
                 this.authorList = res.url
-                 timer = setTimeout(() => {
-                    this.isListLoading = false
-                },500)
-                clearTimeout(timer)
             }
         },
         searchArticles(){
@@ -387,26 +374,11 @@ export default {
             }
         },
         goToArticle(id){
+            sessionStorage.setItem('id',id)
             this.$router.push({
                 name: 'Article',
                 params:{
                     id : id
-                }
-            })
-        },
-        goToDirection(tags){
-            this.$router.push({
-                name: 'Direction',
-                params:{
-                    tags : tags
-                }
-            })
-        },
-        gotoLabel(label){
-            this.$router.push({
-                name:'Label',
-                params:{
-                    label: label
                 }
             })
         },
@@ -508,20 +480,11 @@ export default {
                 padding-right 10px
                 color #409EFF
         .rt-box-body
-            .el-collapse-item
-                padding 0
+            .header-img-box
+                display inline-block
+                padding 10px
                 .header-img
                     vertical-align middle
-                .author-des
-                    display inline-block
-                    height 50px
-                    line-height 50px
-                    font-size 13px
-                    font-weight bold
-                    .el-collapse-item__header
-                        padding 10px  
-                        .el-collapse-item__content
-                            padding-bottom 0
             .tag-list
                 padding 20px 
                 .tag-list-item

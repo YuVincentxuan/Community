@@ -20,15 +20,18 @@
         </el-carousel-item>
       </el-carousel>
       <home-article></home-article>
+      <my-footer></my-footer>
     </div>
 </template>
 <script>
 import axios from 'axios'
 import HomeArticle from './components/Article'
+import myFooter from '../myFooter'
 export default {
     name:'Home',
     components:{
-      HomeArticle
+      HomeArticle,
+      myFooter
     },
     data(){
       return{

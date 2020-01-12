@@ -9,10 +9,11 @@
 
 <script>
 import myHeader from './pages/myHeader'
+
 export default {
   name: 'App',
   components:{
-    myHeader
+    myHeader,
   }
 }
 </script>

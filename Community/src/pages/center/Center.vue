@@ -29,7 +29,7 @@ export default {
     },
     methods:{
         user(){
-            axios.get('https://easy-mock.bookset.io/mock/5da57f7c0e8b45138e6ccc3a/blog/user')
+            axios.get('http://blog.swpuiot.com/user')
             .then(this.userSucc)
         },
         userSucc(res){

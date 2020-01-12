@@ -4,7 +4,6 @@
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                 <h2 class="dataTitle">用户数据</h2>
                 <el-card class=" dataProgress" >
-                   
                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
                     <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
                         <div class="circleProgress">
@@ -183,14 +182,12 @@ export default {
                 console.log(this.percentage)
                 this.percentage1 == this.aimGoal1 ? null : this.percentage1 += this.aimGoal1
                 this.percentage2 == this.aimGoal2 ? null : this.percentage2 += this.aimGoal2
-
         }
     },
     mounted () {
         this.creatE();
         this.creatE2();
         this.increase();
-        
     }
 }
 </script>

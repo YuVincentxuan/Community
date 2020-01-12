@@ -113,13 +113,13 @@ export default {
                 }
             })
         },
-      handleConfirm(index, row,result) {
-        let id = result.ID
-        axios.get('http://blog.swpuiot.com/setUserApplySuccessful?array=0&confirm='+result+'&id='+id+'')
-        console.log(index, row);
-        row.statu = result
-      },
-      identify_goToPage(data){
+        handleConfirm(index, row,result) {
+            let id = result.ID
+            axios.get('http://blog.swpuiot.com/setUserApplySuccessful?array=0&confirm='+result+'&id='+id+'')
+            console.log(index, row);
+            row.statu = result
+        },
+        identify_goToPage(data){
             if(data == -1 && this.identifyPage+data <= 0){
                 this.$message.warning('已经是第一页了')
             }else if(data == 1 && this.identifyPage+data > this.pageNum){

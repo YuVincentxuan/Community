@@ -14,7 +14,6 @@
                             <img alt="">
                         </el-col>
                         <el-col class="username" :span="16" :offset="3">
-                            余文轩
                         </el-col>
                     </el-row>
                     <el-menu-item index="1">

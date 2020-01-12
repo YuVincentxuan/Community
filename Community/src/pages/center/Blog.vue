@@ -229,10 +229,7 @@ export default {
 
         },
         getUserArticles(){
-            let params = new URLSearchParams();
-            params.append('pageNum',this.pageNum)
-            params.append('rows', this.rows)
-            axios.get('http://blog.swpuiot.com/user/articles',params)
+            axios.get('http://blog.swpuiot.com/user/articles?pageNum='+this.pageNum+'&rows='+this.rows)
             .then(this.getUserArticlesSucc)
         },
         getUserArticlesSucc(res){
