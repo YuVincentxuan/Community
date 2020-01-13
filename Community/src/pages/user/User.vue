@@ -67,6 +67,7 @@
                                         @prev-click="handlePrevClick"
                                         @next-click="handleNextClick"
                                         layout="prev, pager, next"
+                                        page-size='6'
                                         :total="this.totalSize">
                                     </el-pagination>
                                 </div>
@@ -78,7 +79,7 @@
                                         <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
                                             <div class="my-follow">
                                                 <div class="my-follow-header">
-                                                    <h4>我的关注</h4>
+                                                    <h4>他的关注</h4>
                                                     <span>{{followingNumber}}</span>
                                                 </div>
                                                 <ul class="people-list">
@@ -91,7 +92,7 @@
                                         <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
                                             <div class="my-follow">
                                                 <div class="my-follow-header">
-                                                    <h4>我的粉丝</h4>
+                                                    <h4>他的粉丝</h4>
                                                     <span>{{followedNumber}}</span>
                                                 </div>
                                                 <ul class="people-list">
@@ -169,9 +170,11 @@ export default {
             }
         },
         getInformation(){
-            axios.get('http://blog.swpuiot.com/common/user/information')
-            .then( res => {
-                res = res.data
+            axios.get('http://blog.swpuiot.com/common/user/informations?commonUserId='+this.$route.params.id)
+            .then(this.getInformationSucc)
+        },
+        getInformationSucc(res){
+            res = res.data
                 if(res.code == 200){
                     this.author = res.author
                     this.answerNumber = res.answerNumber
@@ -183,10 +186,10 @@ export default {
                     this.styles.backgroundImage = 'url('+res.headimg+')'
                     this.flag = res.flag
                 }
-            })
-        },
+            }
+        ,
         getArticle(){
-            axios.get('http://blog.swpuiot.com/common/user/article?pageNum='+this.currentPage+'&rows=6')
+            axios.get('http://blog.swpuiot.com/common/user/articles?pageNum='+this.currentPage+'&rows=6'+'&commonUserId='+this.$route.params.id)
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -197,17 +200,17 @@ export default {
             })
         },
         getFans(){
-            axios.get('http://blog.swpuiot.com/common/user/fans?rows=6&pageNum=1')
+            axios.get('http://blog.swpuiot.com/common/user/fan?rows=6&pageNum=1&commonUserId='+this.$route.params.id)
             .then(res => {
                 res = res.data
                 if(res.code == 200){
-                    this.followedNumber = res.followedNumber
+                    this.followedNumber = res.FollowedNumber
                     this.fans = res.data
                 }
             })
         },
         getFollower(){
-            axios.get('http://blog.swpuiot.com/getAttention?rows=6&pageNum=1')
+            axios.get('http://blog.swpuiot.com/common/user/follow?rows=6&pageNum=1&commonUserId='+this.$route.params.id)
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -247,6 +250,12 @@ export default {
         }
     },
     mounted(){
+        this.getInformation()
+        this.getArticle()
+        this.getFans()
+        this.getFollower()
+    },
+    activated() {
         this.getInformation()
         this.getArticle()
         this.getFans()
@@ -361,6 +370,7 @@ export default {
                 vertical-align top
                 color black
                 font-size 20px
+                cursor pointer
                 @media screen and (max-width: 1200px) {
                     font-size 16px
                 }

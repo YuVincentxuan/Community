@@ -1,28 +1,9 @@
 <template>
 <div class="main">
-    <el-carousel :interval="4000" trigger="click" type="card" :height="_height">
-        <el-carousel-item v-for="(item,index) in images" :key="index">
-          <div class="title">
-            <div class="title-item">
-              <h3 class="small">{{item.direction}}</h3>
-
-            </div>
-          </div>
-          <el-image 
-            class="image"
-            fit="cover"
-            style="width: 100%; height: 100%"
-            :src="item.imageUrl"
-            @click.native="goToUrl(item.articleUrl)"
-          >
-          </el-image>
-      
-        </el-carousel-item>
-    </el-carousel>
     <div class="container">
         <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
-                <div class="button-box">
+                <!-- <div class="button-box">
                     <el-button class="button-item" @click="getListArticles">全部文章</el-button>
                     <el-button class="button-item" @click="getPopularArticles">热门文章</el-button>
                     <el-input
@@ -34,7 +15,7 @@
                         @keyup.enter.native = "searchArticles"
                     >
                     </el-input>
-                </div>
+                </div> -->
                 <ul class="article">
                     <article-loader v-if="isArticleLoading"></article-loader>
                     <li 
@@ -395,8 +376,10 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .container
+    position relative
     width 80%
     margin 0 auto
+    top 80px
     @media screen and (max-width: 1200px) {
         width: 100%;
     }
@@ -422,7 +405,7 @@ export default {
         }
     .article
         width 100%
-        margin 10px 0
+        margin 0
         background-color rgb(240, 240, 240)
         .article-item
             margin 0 auto

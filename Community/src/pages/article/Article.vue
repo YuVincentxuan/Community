@@ -9,7 +9,7 @@
                     </el-badge>
                 </li>
                 <li class="nav-item">
-                    <el-badge :value="9" class="item" type="primary">
+                    <el-badge :value="commentNum" class="item" type="primary">
                         <a href="#comments"><i class="el-icon-chat-dot-round"></i></a>
                     </el-badge>
                 </li>
@@ -45,6 +45,18 @@
                             :scrollStyle="true"
                             :ishljs="true"
                         ></mavon-editor>
+                        <div style="margin: 10px 0">
+                            <span style="color:#000">标签:</span>
+                             <el-tag v-for="(tag,i) in tags" :key="i"
+                                class="article-tag"
+                                size="mini"
+                                type=""
+                                effect="dark"
+                                    @click="goToLabel"
+                                >
+                                {{ tag }}
+                            </el-tag>
+                        </div>
                     </div>
                     <div class="comment-list">
                         <h3 id="comments">用户评论</h3>
@@ -127,9 +139,11 @@ export default {
             authorName:'',
             author:'',
             articleList:[],
+            tags:[],
             flag: 0,
             articleNum:0, 
             attention :0,
+            commentNum:0,
             fans:0,
             isArticleLoading: true,
             isInforLoading: true,
@@ -155,8 +169,10 @@ export default {
                 this.date = res.date
                 this.read = res.read
                 this.content = res.content
-                this.comment = res.comment
+
+                this.commentNum = res.commentNum
                 this.articleList = res.articleList
+                this.tags = res.tags
                 timer = setTimeout(() => {
                     this.isArticleLoading = false
                     this.isListLoading = false
@@ -166,7 +182,7 @@ export default {
             } 
         },
         getInformation(){
-            axios.get('http://blog.swpuiot.com/information?rows=4&pageNum=1')
+            axios.get('http://blog.swpuiot.com/getArticleOfUser?rows=4&pageNum=1&articleId='+this.$route.params.id)
             .then(this.getInformationSucc)
         },
         getInformationSucc(res){
@@ -178,13 +194,21 @@ export default {
                 this.fans = res.fans
             }
         },
+        getComment(){
+            axios.get('http://blog.swpuiot.com/getArticleComments?articleId='+this.$route.params.id)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.comment = res.comment
+                }
+            })
+        },
         followBtn(){
             axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author+'')
             .then(res => {
                 res = res.data
                 if(res.code == 200){
                     this.flag = res.flag
-                    
                 }
             })
             // this.flag = this.flag == 0 ? 1 : 0
@@ -196,6 +220,7 @@ export default {
     mounted(){
         this.readPassage()
         this.getInformation()
+        this.getComment()
     },
     activated() {
         this.isArticleLoading = true
@@ -203,6 +228,7 @@ export default {
         this.isInforLoading = true
         this.readPassage()
         this.getInformation()
+        this.getComment()
     }
 }
 </script>

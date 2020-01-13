@@ -75,12 +75,12 @@ export default new Router({
       component:Question
     },
     {
-      path:'/direction',
+      path:'/direction?direction=:tags',
       name:'Direction',
       component:Direction
     },
     {
-      path:'/label',
+      path:'/label?label=:label',
       name:'Label',
       component:Label
     }

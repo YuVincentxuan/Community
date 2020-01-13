@@ -1,28 +1,9 @@
 <template>
 <div class="main">
-    <el-carousel :interval="4000" trigger="click" type="card" :height="_height">
-        <el-carousel-item v-for="(item,index) in images" :key="index">
-          <div class="title">
-            <div class="title-item">
-              <h3 class="small">{{item.direction}}</h3>
-
-            </div>
-          </div>
-          <el-image 
-            class="image"
-            fit="cover"
-            style="width: 100%; height: 100%"
-            :src="item.imageUrl"
-            @click.native="goToUrl(item.articleUrl)"
-          >
-          </el-image>
-      
-        </el-carousel-item>
-    </el-carousel>
     <div class="container">
         <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
-                <div class="button-box">
+                <!-- <div class="button-box">
                     <el-button class="button-item" @click="getListArticles">全部文章</el-button>
                     <el-button class="button-item" @click="getPopularArticles">热门文章</el-button>
                     <el-input
@@ -34,7 +15,7 @@
                         @keyup.enter.native = "searchArticles"
                     >
                     </el-input>
-                </div>
+                </div> -->
                 <ul class="article">
                     <article-loader v-if="isArticleLoading"></article-loader>
                     <li 
@@ -74,13 +55,9 @@
                         </div>
                     </li>
                 </ul>
-                <div class="more" v-show="allOrHot == 'all'">
+                <div class="more">
                     <el-button type="primary" class="clickMore" v-if="allPageNum!=1" @click="all_goToPage(-1)">上一页</el-button>
                     <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="all_goToPage(1)">下一页</el-button>
-                </div>
-                <div class="more"  v-show="allOrHot == 'hot'">
-                    <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
-                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
@@ -161,7 +138,6 @@ export default {
             articles:[],
             authorList:[],
             experienceArticles:[],
-            allOrHot:'all',
             isArticleLoading: true,
             isListLoading:true,
             isExpLoading:true
@@ -291,49 +267,51 @@ export default {
                 return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
             }
         },
-        getListArticles(){
-            this.allOrHot = 'all'
-            let params = new URLSearchParams();
-            params.append('pageNum',this.allPageNum)
-            params.append('rows', this.rows)
-            axios.post('http://blog.swpuiot.com/getListArticles',params)
+        getDirectionArticles(){
+            axios.get('http://blog.swpuiot.com/getDirectionArticles?rows='+this.rows+'&pageNum='+this.allPageNum)
             .then(this.getListArticlesSucc)
         },
-        getListArticlesSucc(res){
+        getDirectionArticlesSucc(res){
             res = res.data
             this.isArticleLoading = false
             if(res.code == 200){
                 this.articles = res.data
             }
         },
-        getPopularArticles(){
-            this.allOrHot = 'hot'
-            let params = new URLSearchParams();
-            params.append('pageNum',this.hotPageNum)
-            params.append('rows', this.rows)
-            axios.post('http://blog.swpuiot.com/getPopularArticles',params)
-            // axios.post('/getPopularArticles')
-            .then(this.getPopularArticlesSucc)
+        getDirectionTags(){
+            axios.get('http://blog.swpuiot.com/getDirectionTags?direction='+this.$route.params.tags)
+            .then(res => {
+                res = res.data
+            })
         },
-        getPopularArticlesSucc(res){
-            res = res.data
-            if(res.code == 200){
-                this.articles = res.data
-            }
-        },
-        getExperienceArticle(){
-            axios.post('http://blog.swpuiot.com/getInterviewExperienceArticles')
-            .then(this.getExperienceArticleSucc)
-        },
-        getExperienceArticleSucc(res){
-            res = res.data
-            this.isExpLoading = false
-            if(res.code == 200){
-                this.experienceArticles = res.data
-            }
-        },
+        // getPopularArticles(){
+        //     this.allOrHot = 'hot'
+        //     let params = new URLSearchParams();
+        //     params.append('pageNum',this.hotPageNum)
+        //     params.append('rows', this.rows)
+        //     axios.post('http://blog.swpuiot.com/getPopularArticles',params)
+        //     // axios.post('/getPopularArticles')
+        //     .then(this.getPopularArticlesSucc)
+        // },
+        // getPopularArticlesSucc(res){
+        //     res = res.data
+        //     if(res.code == 200){
+        //         this.articles = res.data
+        //     }
+        // },
+        // getExperienceArticle(){
+        //     axios.post('http://blog.swpuiot.com/getInterviewExperienceArticles')
+        //     .then(this.getExperienceArticleSucc)
+        // },
+        // getExperienceArticleSucc(res){
+        //     res = res.data
+        //     this.isExpLoading = false
+        //     if(res.code == 200){
+        //         this.experienceArticles = res.data
+        //     }
+        // },
         getAllAuthors(){
-            axios.post('http://blog.swpuiot.com/getAllAuthors')
+            axios.get('http://blog.swpuiot.com/getAuthorName?direction='+this.$route.params.tags)
             .then(this.getAllAuthorsSucc)
         },
         getAllAuthorsSucc(res){
@@ -343,16 +321,16 @@ export default {
                 this.authorList = res.url
             }
         },
-        searchArticles(){
-            axios.get('http://blog.swpuiot.com/getPartArticles?value='+this.searchInput+'&pageNum='+this.hotPageNum+'&rows='+this.rows)
-            .then(this.searchArticlesSucc)
-        },
-        searchArticlesSucc(res){
-            res = res.data
-            if(res.code == 200){
-                this.articles = res.data
-            }
-        },
+        // searchArticles(){
+        //     axios.get('http://blog.swpuiot.com/getPartArticles?value='+this.searchInput+'&pageNum='+this.hotPageNum+'&rows='+this.rows)
+        //     .then(this.searchArticlesSucc)
+        // },
+        // searchArticlesSucc(res){
+        //     res = res.data
+        //     if(res.code == 200){
+        //         this.articles = res.data
+        //     }
+        // },
         all_goToPage(data){
             if(data == -1 && this.allPageNum+data <= 0){
                 this.$message.warning('已经是第一页了')
@@ -387,16 +365,19 @@ export default {
         },
     },
     mounted(){
-        this.getListArticles()
+        // this.getListArticles()
         this.getAllAuthors()
-        this.getExperienceArticle()
+        this.getDirectionArticles()
+        // this.getExperienceArticle()
     }
 }
 </script>
 <style lang="stylus" scoped>
 .container
+    position relative
     width 80%
     margin 0 auto
+    top 80px
     @media screen and (max-width: 1200px) {
         width: 100%;
     }

@@ -60,7 +60,7 @@
                                         class="article-tag"
                                         type=""
                                         effect="dark"
-                                         @click="goToLabel(item.directionLabel)"
+                                         @click="goToLabel(tag)"
                                         >
                                         {{ tag }}
                                     </el-tag>
@@ -75,13 +75,21 @@
                         </div>
                     </li>
                 </ul>
-                <div class="more" v-show="allOrHot == 'all'">
-                    <el-button type="primary" class="clickMore" v-if="allPageNum!=1" @click="all_goToPage(-1)">上一页</el-button>
-                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="all_goToPage(1)">下一页</el-button>
+                <div class="more" v-if="allOrHot == 'all'">
+                    <!-- <el-button type="primary" class="clickMore" v-if="allPageNum!=1" @click="all_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="all_goToPage(1)">下一页</el-button> -->
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="all_goToPage(1)">加载更多</el-button>
+                    
                 </div>
-                <div class="more"  v-show="allOrHot == 'hot'">
-                    <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
-                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button>
+                <div class="more"  v-else-if="allOrHot == 'hot'">
+                    <!-- <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button> -->
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="hot_goToPage(1)">加载更多</el-button>
+                </div>
+                <div class="more"  v-else>
+                    <!-- <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button> -->
+                    <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="search_goToPage(1)">加载更多</el-button>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
@@ -92,11 +100,11 @@
                     <div class="rt-box-body">
                         <ul class="tag-list">
                             <li class="tag-list-item">
-                                    <el-tag
-                                    type="success"
-                                    effect="dark">
-                                    前端
-                                    </el-tag>
+                                <el-tag
+                                type="success"
+                                effect="dark">
+                                前端
+                                </el-tag>
                             </li>
                         </ul>
                     </div>
@@ -113,9 +121,7 @@
                                 v-for="(author,index) in authorList"
                                 :key="index"
                                 :title="(index+1) +'.'+author.name" :name="index">
-                                <router-link :to="author.homePageUrl">
-                                    <el-avatar class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
-                                 </router-link>
+                                <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
                                 <div class="author-des">
                                     <span>文章：{{author.articlesNum}}</span>
                                     <span>粉丝：{{author.fansNum}}</span>
@@ -161,6 +167,7 @@ export default {
             activeName:0,
             allPageNum:1,
             hotPageNum:1,
+            searchPageNum:1,
             rows:10,
             articles:[],
             authorList:[],
@@ -306,7 +313,10 @@ export default {
         getListArticlesSucc(res){
             res = res.data
             if(res.code == 200){
-                this.articles = res.data
+                var _this = this
+                res.data.forEach(function(item,index){
+                    _this.articles.push(item)
+                })
                  timer = setTimeout(() => {
                    this.isArticleLoading = false  
                 },500)
@@ -325,7 +335,11 @@ export default {
         getPopularArticlesSucc(res){
             res = res.data
             if(res.code == 200){
-                this.articles = res.data
+                var _this = this
+                res.data.forEach(function(item,index){
+                    _this.articles.push(item)
+                })
+               
             }
         },
         getExperienceArticle(){
@@ -336,7 +350,7 @@ export default {
             res = res.data
             if(res.code == 200){
                 this.experienceArticles = res.data
-                 timer = setTimeout(() => {
+                timer = setTimeout(() => {
                     this.isExpLoading = false
                 },500)
                 clearTimeout(timer)
@@ -350,26 +364,30 @@ export default {
             res = res.data
             if(res.code == 200){
                 this.authorList = res.url
-                 timer = setTimeout(() => {
+                timer = setTimeout(() => {
                     this.isListLoading = false
                 },500)
                 clearTimeout(timer)
             }
         },
         searchArticles(){
-            axios.get('http://blog.swpuiot.com/getPartArticles?value='+this.searchInput+'&pageNum='+this.hotPageNum+'&rows='+this.rows)
+            axios.get('http://blog.swpuiot.com/getPartArticles?value='+this.searchInput+'&pageNum='+this.searchPageNum+'&rows='+this.rows)
             .then(this.searchArticlesSucc)
         },
         searchArticlesSucc(res){
+            this.allOrHot = 'search'
             res = res.data
             if(res.code == 200){
-                this.articles = res.data
+                var _this = this
+                res.data.forEach(function(item,index){
+                    _this.articles.push(item)
+                })
             }
         },
         all_goToPage(data){
             if(data == -1 && this.allPageNum+data <= 0){
                 this.$message.warning('已经是第一页了')
-            }else if(data == 1 && this.allPageNum+data >= this.articles.pageNum){
+            }else if(data == 1 && this.allPageNum+data >= this.articles.length){
                 this.$message.warning('已经是最后一页了')
             }else{
                 this.allPageNum = this.allPageNum+data
@@ -383,7 +401,17 @@ export default {
                 this.$message.warning('已经是最后一页了')
             }else{
                 this.hotPageNum = this.hotPageNum+data
-                this.getListArticles()
+                this.getPopularArticles()
+            }
+        },
+        search_goToPage(data){
+            if(data == -1 && this.searchPageNum+data <= 0){
+                this.$message.warning('已经是第一页了')
+            }else if(data == 1 && this.searchPageNum+data >= this.articles.pageNum){
+                this.$message.warning('已经是最后一页了')
+            }else{
+                this.searchPageNum = this.searchPageNum+data
+                this.searchArticles()
             }
         },
         goToArticle(id){
@@ -395,14 +423,31 @@ export default {
             })
         },
         goToDirection(tags){
+            let direction = '';
+            switch(tags){
+                case '前端':
+                    direction = 'webfront'
+                    break
+                case '后端':
+                    direction = 'webrear'
+                    break;
+                case '安卓':
+                    direction = 'android'
+                    break;
+                case '嵌入式':
+                    direction = 'embedded'
+                    break;
+                default:
+                    direction = 'null'
+            };
             this.$router.push({
                 name: 'Direction',
                 params:{
-                    tags : tags
+                    tags : direction
                 }
             })
         },
-        gotoLabel(label){
+        goToLabel(label){
             this.$router.push({
                 name:'Label',
                 params:{
@@ -411,7 +456,12 @@ export default {
             })
         },
         goToUser(id){
-            this.$router.push('/user/'+id)
+            this.$router.push({
+                name:'User',
+                params:{
+                    id: id
+                }
+            })
         },
     },
     mounted(){

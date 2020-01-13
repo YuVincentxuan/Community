@@ -2,10 +2,10 @@
     <header class="header-nav">
         <el-row>
             <el-col :xs="10" :sm="3" :md="3" :lg="3" :offset="1">
-                <div class="header">
-                    <img src="/assets/wingling.png" alt="">
+                <router-link to="/" class="header" tag="div">
+                    <img src="../assets/wingling.png" alt="">
                     <h1>翼灵社区</h1>
-                </div>
+                </router-link>
             </el-col>
             <el-col :xs="13" :sm="20" :md="20" :lg="20" class="offcanvas-collapse">
                 <el-col :xs="18" :sm="18" :md="15" :lg="18">
@@ -114,6 +114,7 @@ header{
     width: 100%;
     position: fixed;
     z-index:1600;
+    cursor:pointer;
 }
 .header,.lo-re-box,.rightNav{
     display: flex;
