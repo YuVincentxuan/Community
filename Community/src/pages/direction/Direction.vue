@@ -84,11 +84,9 @@
                                 class="header-img-box"
                                 v-for="(author,index) in authorList"
                                 :key="index"
-                                :title="(index+1) +'.'+author.name" :name="index"
+                                :title="(index+1) +'.'+author.userName" :name="index"
                             >
-                                <router-link :to="author.homePageUrl">
-                                    <el-avatar class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
-                                </router-link>
+                                <el-avatar class="header-img" :size="50" :src="author.headimg"></el-avatar>
                             </div>
                     </div>
                 </div>
@@ -306,15 +304,16 @@ export default {
         //         this.experienceArticles = res.data
         //     }
         // },
-        getAllAuthors(){
-            axios.get('http://blog.swpuiot.com/getAuthorName?direction='+this.$route.params.tags)
-            .then(this.getAllAuthorsSucc)
+        getDirectionAuthor(){
+            axios.get('http://blog.swpuiot.com/getDirectionAuthor?direction='+this.$route.params.tags)
+            .then(this.getDirectionAuthorsSucc)
         },
-        getAllAuthorsSucc(res){
+        getDirectionAuthorsSucc(res){
             res = res.data
             this.isListLoading = false
             if(res.code == 200){
-                this.authorList = res.url
+                this.authorList = res.data
+                console.log(this.authorList)
             }
         },
         // searchArticles(){
@@ -362,10 +361,15 @@ export default {
     },
     mounted(){
         // this.getListArticles()
-        this.getAllAuthors()
+        this.getDirectionAuthor()
         this.getDirectionArticles()
         this.getDirectionTags()
         // this.getExperienceArticle()
+    },
+    activated(){
+        this.getDirectionAuthor()
+        this.getDirectionArticles()
+        this.getDirectionTags()
     }
 }
 </script>
