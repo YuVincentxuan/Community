@@ -24,7 +24,7 @@
                         :key="item.title"
                     >
                         <div>
-                            <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.headimg"></el-avatar>
+                            <el-avatar @click.native="goToUser(item.author)" class="header-img" :size="50" :src="item.headimg"></el-avatar>
                             <div class="author-info">
                             <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
                             <span class="author-time">
@@ -38,6 +38,7 @@
                                      v-for="(tag,i) in item.attributeLabel" :key="i"
                                     class="article-tag"
                                     type=""
+                                    @click="goToLabel(tag)"
                                     effect="dark">
                                     {{ tag }}
                                     </el-tag>
@@ -86,7 +87,7 @@
                                 :key="index"
                                 :title="(index+1) +'.'+author.userName" :name="index"
                             >
-                                <el-avatar class="header-img" :size="50" :src="author.headimg"></el-avatar>
+                                <el-avatar @click.native="goToUser(author.author)" class="header-img" :size="50" :src="author.headimg"></el-avatar>
                             </div>
                     </div>
                 </div>
@@ -356,7 +357,20 @@ export default {
             })
         },
         goToUser(id){
-            this.$router.push('/user/'+id)
+            this.$router.push({
+                name:'User',
+                params:{
+                    id: id
+                }
+            })
+        },
+        goToLabel(label){
+            this.$router.push({
+                name:'Label',
+                params:{
+                    label: label
+                }
+            })
         },
     },
     mounted(){
@@ -370,6 +384,7 @@ export default {
         this.getDirectionAuthor()
         this.getDirectionArticles()
         this.getDirectionTags()
+        console.log(3)
     }
 }
 </script>

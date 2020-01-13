@@ -371,6 +371,11 @@ export default {
         this.getListArticles()
         this.getAllAuthors()
         this.getExperienceArticle()
+    },
+    activated(){
+        this.getListArticles()
+        this.getAllAuthors()
+        this.getExperienceArticle()
     }
 }
 </script>

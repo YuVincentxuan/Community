@@ -60,7 +60,7 @@
                                         class="article-tag"
                                         type=""
                                         effect="dark"
-                                         @click="goToLabel(tag)"
+                                        @click="goToLabel(tag)"
                                         >
                                         {{ tag }}
                                     </el-tag>
