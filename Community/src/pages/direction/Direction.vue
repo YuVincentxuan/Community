@@ -28,22 +28,19 @@
                             <div class="author-info">
                             <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
                             <span class="author-time">
-                                    <el-tag
+                                    <!-- <el-tag
                                         class="article-tag"
                                         type="success"
                                         effect="dark">
                                         {{ item.type }}
-                                    </el-tag>
-                                <a  
-                                v-for="(tag,i) in item.attributeLabel"
-                                :key="i">
+                                    </el-tag> -->
                                     <el-tag
-                                        class="article-tag"
-                                        type=""
-                                        effect="dark">
-                                        {{ tag }}
+                                     v-for="(tag,i) in item.attributeLabel" :key="i"
+                                    class="article-tag"
+                                    type=""
+                                    effect="dark">
+                                    {{ tag }}
                                     </el-tag>
-                                 </a>
                             </span>
                         </div>
                         </div>
@@ -67,15 +64,12 @@
                     </div>
                     <div class="rt-box-body">
                         <ul class="tag-list">
-                            <li class="tag-list-item">
-                                <a>
-                                    <el-tag
-                                    type="success"
-                                    effect="dark">
-                                    前端
-                                    </el-tag>
-                                </a>
-                            
+                            <li class="tag-list-item" v-for="(tag, index) in tags" :key="index">
+                                <el-tag
+                                type="success"
+                                effect="dark">
+                                tag
+                                </el-tag>
                             </li>
                         </ul>
                     </div>
@@ -137,6 +131,7 @@ export default {
             rows:10,
             articles:[],
             authorList:[],
+            tags:[],
             experienceArticles:[],
             isArticleLoading: true,
             isListLoading:true,
@@ -268,8 +263,8 @@ export default {
             }
         },
         getDirectionArticles(){
-            axios.get('http://blog.swpuiot.com/getDirectionArticles?rows='+this.rows+'&pageNum='+this.allPageNum)
-            .then(this.getListArticlesSucc)
+            axios.get('http://blog.swpuiot.com/	/getGroupArticles?rows='+this.rows+'&pageNum='+this.allPageNum+'&direction='+this.$route.params.tags)
+            .then(this.getDirectionArticlesSucc)
         },
         getDirectionArticlesSucc(res){
             res = res.data
@@ -282,6 +277,7 @@ export default {
             axios.get('http://blog.swpuiot.com/getDirectionTags?direction='+this.$route.params.tags)
             .then(res => {
                 res = res.data
+                this.tags = res.data
             })
         },
         // getPopularArticles(){
@@ -368,6 +364,7 @@ export default {
         // this.getListArticles()
         this.getAllAuthors()
         this.getDirectionArticles()
+        this.getDirectionTags()
         // this.getExperienceArticle()
     }
 }
@@ -469,7 +466,8 @@ export default {
             .tag-list
                 padding 20px 
                 .tag-list-item
-                    margin 2px 0
+                    display inline-block
+                    margin 2px 5px
             .ex-list
                 .ex-item
                     padding 10px 10px
