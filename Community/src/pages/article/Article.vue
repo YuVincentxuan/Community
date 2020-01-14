@@ -26,9 +26,9 @@
                     <article-loader v-if="isArticleLoading"></article-loader>
                     <div v-else class="article-show" >
                         <div class="author-title">
-                            <el-avatar class="header-img" :size="50" :src="headImg"></el-avatar>
+                            <el-avatar @click.native="goToUser(authorId)" class="header-img" :size="50" :src="headImg"></el-avatar>
                             <div class="author-info">
-                                <span class="author-name">{{this.authorName}}</span>
+                                <span @click="goToUser(authorId)" class="author-name">{{this.authorName}}</span>
                                 <span class="author-time">{{this.date}} 阅读量 {{this.read}}</span>
                             </div>
                             <el-button class="follow-btn" v-if="this.flag==0" @click="followBtn" size="mini" type="success">+ 关注</el-button>
@@ -48,11 +48,11 @@
                         <div style="margin: 10px 0">
                             <span style="color:#000">标签:</span>
                              <el-tag v-for="(tag,i) in tags" :key="i"
-                                class="article-tag"
+                                style="cursor:pointer"
                                 size="mini"
                                 type=""
                                 effect="dark"
-                                    @click="goToLabel"
+                                    @click="goToLabel(tag)"
                                 >
                                 {{ tag }}
                             </el-tag>
@@ -61,7 +61,7 @@
                     <div class="comment-list">
                         <h3 id="comments">用户评论</h3>
                         <div class="comment-item">
-                           <article-comment :comments="comment"></article-comment>
+                           <article-comment></article-comment>
                         </div>
                     </div>
                 </el-col>
@@ -73,9 +73,9 @@
                             </div>
                             <infor-loader v-if="isInforLoading"></infor-loader>
                             <div v-else class="rt-box-body">
-                                <el-avatar class="header-img" :size="60" :src="headImg"></el-avatar>
+                                <el-avatar @click.native="goToUser(authorId)" class="header-img" :size="60" :src="headImg"></el-avatar>
                                 <div class="author-info">
-                                    <span class="author-name">{{this.authorName}}</span>
+                                    <span @click="goToUser(authorId)" class="author-name">{{this.authorName}}</span>
                                     <span class="author-sign" title="我是一个没有感情的code killer">我是一个没有感情的code killer</span>
                                 </div>
                                 <div class="author-data">
@@ -92,12 +92,11 @@
                             </div>
                             <list-loader v-if="isListLoading"></list-loader>
                             <div v-else class="rt-box-body">
-                                <ul class="ex-list" 
-                                    v-for="(articles,index) in articleList"
-                                    :key="index">
-                                    <router-link to="/article" tag="li" :title="'题目:'+articles.title" class="ex-item">
+                                <ul class="ex-list" >
+                                    <li v-for="(articles,index) in articleList"
+                                    :key="index" @click="goToArticle(articles.articleId)"  :title="'作者:'+articles.author" class="ex-item">
                                         {{articles.title}}
-                                    </router-link>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -137,6 +136,7 @@ export default {
             date:'',
             headImg:'',
             authorName:'',
+            authorId:'',
             author:'',
             articleList:[],
             tags:[],
@@ -192,17 +192,19 @@ export default {
                 this.articleNum = res.articleNum
                 this.attention = res.attention
                 this.fans = res.fans
+                this.authorId = res.author
             }
         },
-        getComment(){
-            axios.get('http://blog.swpuiot.com/getArticleComments?articleId='+this.$route.params.id)
-            .then(res => {
-                res = res.data
-                if(res.code == 200){
-                    this.comment = res.comment
-                }
-            })
-        },
+        // getComment(){
+        //     axios.get('http://blog.swpuiot.com/getArticleComments?articleId='+this.$route.params.id)
+        //     .then(res => {
+        //         res = res.data
+        //         if(res.code == 200){
+        //             this.comment = res.data.comment
+        //         }
+                
+        //     })
+        // },
         followBtn(){
             axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author+'')
             .then(res => {
@@ -215,12 +217,36 @@ export default {
         },
         addLike(){
             this.isNotLiked = !this.isNotLiked
-        }
+        },
+        goToLabel(label){
+            this.$router.push({
+                name:'Label',
+                params:{
+                    label: label
+                }
+            })
+        },
+        goToArticle(id){
+            this.$router.push({
+                name: 'Article',
+                params:{
+                    id : id
+                }
+            })
+        },
+        goToUser(id){
+            this.$router.push({
+                name:'User',
+                params:{
+                    id: id
+                }
+            })
+        },
     },
     mounted(){
         this.readPassage()
         this.getInformation()
-        this.getComment()
+        // this.getComment()
     },
     activated() {
         this.isArticleLoading = true
@@ -228,7 +254,19 @@ export default {
         this.isInforLoading = true
         this.readPassage()
         this.getInformation()
-        this.getComment()
+        // this.getComment()
+    },
+    watch:{
+        $route:function(to, from){
+            if(to.path !== from.path){
+                // this.$route.params.id = to.params.id
+                this.isArticleLoading = true
+                this.isListLoading = true
+                this.isInforLoading = true
+                this.readPassage()
+                this.getInformation()
+            }
+        }
     }
 }
 </script>

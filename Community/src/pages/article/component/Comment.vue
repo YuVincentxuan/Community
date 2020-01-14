@@ -26,24 +26,24 @@
                 <span class="author-time">{{dateStr(item.date)}}</span>
             </div>
             <div class="icon-btn">
-                <span @click="showReplyInput(i,item.plName,item.self_id)"><i class="iconfont el-icon-s-comment"></i>{{item.reply.length}}</span>
+                <span @click="showReplyInput(i,item.plName,item.self_id),addLike(i)"><i class="iconfont el-icon-s-comment"></i></span>
                 <span @click="addLike(i)"><i class="iconfont el-icon-caret-top" :class="{'redLike':item.likeTag}"></i>{{item.zNumber}}</span>
             </div>
             <div class="talk-box">
                 <p>
-                    <span class="reply">{{item.comment}}</span>
+                    <span class="reply">{{item.plContent}}</span>
                 </p>
             </div>
             
             <div class="reply-box">
-                <div v-for="(reply,j) in item.reply" :key="reply.j" class="author-title">
+                <div v-for="(reply,j) in item.reply" :key="j" class="author-title">
                     <el-avatar class="header-img" :size="40" :src="reply.fromHeadImg"></el-avatar>
                     <div class="author-info">
                         <span class="author-name">{{reply.plName}}</span>
                         <span class="author-time">{{dateStr(reply.date)}}</span>
                     </div>
                     <div class="icon-btn">
-                        <span @click="showReplyInput(i,reply.plName,reply.self_id)"><i class="iconfont el-icon-s-comment"></i>{{reply.commentNum}}</span>
+                        <span @click="showReplyInput(i,reply.plName,reply.self_id),addreplyLike(i,j)"><i class="iconfont el-icon-s-comment"></i></span>
                         <span @click="addreplyLike(i,j)"><i class="iconfont el-icon-caret-top" :class="{'redLike':reply.likeTag}"></i>{{reply.zNumber}}</span>
                     </div>
                     <div class="talk-box">
@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            <div  v-show="_inputShow(i)" class="my-reply my-comment-reply">
+            <div  v-show="comments[i].inputShow" class="my-reply my-comment-reply">
                 <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
                 <div class="reply-info" >
                     <div tabindex="0" contenteditable="true" spellcheck="false" :placeholder="_placeholder"   @input="onDivInput($event)"  class="reply-input reply-comment-input"></div>
@@ -70,6 +70,7 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
 const clickoutside = {
     // 初始化指令
     bind(el, binding, vnode) {
@@ -97,9 +98,9 @@ const clickoutside = {
 };
 export default {
     name:'ArticleComment',
-    props:{
-        comments:Array
-    },
+    // props:{
+    //     comments:Array
+    // },
     data(){
         return{
             btnShow: false,
@@ -110,7 +111,10 @@ export default {
             myId:19870621,
             to:'',
             toId:-1,
-            _placeholder:''
+            _placeholder:'',
+            show: 1,
+            showNum:false,
+            comments:[]
             // comments:[
             //     {
             //         name:'Lana Del Rey',
@@ -194,6 +198,25 @@ export default {
     },
     directives: {clickoutside},
     methods: {
+        getComment(){
+            axios.get('http://blog.swpuiot.com/getArticleComments?articleId='+this.$route.params.id)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.comments = res.data.comment
+                    this.comments.forEach(function(item, index){
+                        item.inputShow = false
+                        if(item.reply != null){
+                            item.reply.forEach(function(val, idx){
+                                val.inputShow = false
+                            })
+                        }
+                    })
+                    console.log(this.comments)
+                }
+                
+            })
+        },
         inputFocus(){
             var replyInput = document.getElementById('replyInput');
             replyInput.style.padding= "8px 8px"
@@ -215,9 +238,7 @@ export default {
             this.to = name
             this.toId = id
             this._placeholder = '回复'+ name +':' 
-        },
-        _inputShow(i){
-            return this.comments[i].inputShow 
+            this.$nextTick()
         },
         sendComment(){
             if(!this.replyComment){
@@ -235,8 +256,9 @@ export default {
                 a.plContent =this.replyComment
                 a.commentImg = this.myHeader
                 a.date = time
-                a.commentNum = ''
+                a.commentNum = 0
                 a.zNumber = 0
+                a.reply = []
                 this.comments.push(a)
                 this.replyComment = ''
                 input.innerHTML = '';
@@ -315,11 +337,10 @@ export default {
                 this.comments[i].reply[j].likeTag = true              
             }
         }
-    },  
-    beforeUpdate(){
-        console.log(this.comments)
-    } 
-
+    },
+    mounted(){
+        this.getComment()
+    }
 }
 </script>
 <style lang="stylus" scoped>

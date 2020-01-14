@@ -17,8 +17,8 @@
         <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="18">
                 <div class="button-box">
-                    <el-button class="button-item" @click="getListArticles">全部文章</el-button>
-                    <el-button class="button-item" @click="getPopularArticles">热门文章</el-button>
+                    <el-button class="button-item" @click="getListArticles(0)">全部文章</el-button>
+                    <el-button class="button-item" @click="getPopularArticles(0)">热门文章</el-button>
                     <el-input
                         class="searchInput"
                         placeholder="请输入内容"
@@ -86,11 +86,11 @@
                     <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button> -->
                     <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="hot_goToPage(1)">加载更多</el-button>
                 </div>
-                <div class="more"  v-else>
-                    <!-- <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
-                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button> -->
+                <!-- <div class="more"  v-else>
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!=1" @click="hot_goToPage(-1)">上一页</el-button>
+                    <el-button type="primary" class="clickMore" v-if="hotPageNum!= articles.pageNum" @click="hot_goToPage(1)">下一页</el-button>
                     <el-button type="primary" class="clickMore" v-if="allPageNum!= articles.pageNum" @click="search_goToPage(1)">加载更多</el-button>
-                </div>
+                </div> -->
             </el-col>
             <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="6">
                 <div class="rt-box hot-tag">
@@ -99,11 +99,12 @@
                     </div>
                     <div class="rt-box-body">
                         <ul class="tag-list">
-                            <li class="tag-list-item">
+                            <li class="tag-list-item" v-for="(item, index) in directionList" :key="index">
                                 <el-tag
+                                @click="goToDirection('item')"
                                 type="success"
                                 effect="dark">
-                                前端
+                                {{item}}
                                 </el-tag>
                             </li>
                         </ul>
@@ -121,7 +122,7 @@
                                 v-for="(author,index) in authorList"
                                 :key="index"
                                 :title="(index+1) +'.'+author.name" :name="index">
-                                <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
+                                <el-avatar @click.native="goToUser(item.homePageUrl)" class="header-img" :size="50" :src="author.photoUrl"></el-avatar>
                                 <div class="author-des">
                                     <span>文章：{{author.articlesNum}}</span>
                                     <span>粉丝：{{author.fansNum}}</span>
@@ -137,12 +138,11 @@
                     </div>
                     <div class="rt-box-body">
                         <list-loader v-if="isExpLoading"></list-loader>
-                        <ul v-else class="ex-list" 
-                            v-for="(articles,index) in experienceArticles"
-                            :key="index">
-                            <router-link to="/article" tag="li" :title="'作者:'+articles.authorname" class="ex-item">
+                        <ul v-else class="ex-list" >
+                            <li v-for="(articles,index) in experienceArticles"
+                            :key="index" @click="goToArticle(articles.articleId)"  :title="'作者:'+articles.author" class="ex-item">
                                 {{articles.title}}
-                            </router-link>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -175,7 +175,8 @@ export default {
             allOrHot:'all',
             isArticleLoading: true,
             isListLoading:true,
-            isExpLoading:true
+            isExpLoading:true,
+            directionList:['前端','后端','嵌入式','安卓']
         //     articles:[
         //         {
         //             title:'这是我的第一篇文章',
@@ -302,7 +303,12 @@ export default {
                 return date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
             }
         },
-        getListArticles(){
+        getListArticles(tag){
+            if(tag == 0) 
+            {
+                this.articles = []
+                this.isArticleLoading = true
+            }
             this.allOrHot = 'all'
             let params = new URLSearchParams();
             params.append('pageNum',this.allPageNum)
@@ -323,7 +329,12 @@ export default {
                 clearTimeout(timer)
             }
         },
-        getPopularArticles(){
+                
+        getPopularArticles(tag){
+            if(tag == 0) {
+                this.articles = []
+                this.isArticleLoading = true
+            }
             this.allOrHot = 'hot'
             let params = new URLSearchParams();
             params.append('pageNum',this.hotPageNum)
@@ -339,7 +350,10 @@ export default {
                 res.data.forEach(function(item,index){
                     _this.articles.push(item)
                 })
-               
+                timer = setTimeout(() => {
+                   this.isArticleLoading = false  
+                },500)
+                clearTimeout(timer)
             }
         },
         getExperienceArticle(){
@@ -378,10 +392,11 @@ export default {
             this.allOrHot = 'search'
             res = res.data
             if(res.code == 200){
-                var _this = this
-                res.data.forEach(function(item,index){
-                    _this.articles.push(item)
-                })
+                this.articles  = res.data
+                // var _this = this
+                // res.data.forEach(function(item,index){
+                //     _this.articles.push(item)
+                // })
             }
         },
         all_goToPage(data){
@@ -575,7 +590,9 @@ export default {
             .tag-list
                 padding 20px 
                 .tag-list-item
-                    margin 2px 0
+                    display inline-block
+                    margin 5px 10px
+                    cursor pointer
             .ex-list
                 .ex-item
                     padding 10px 10px

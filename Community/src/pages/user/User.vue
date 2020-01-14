@@ -84,7 +84,7 @@
                                                 </div>
                                                 <ul class="people-list">
                                                     <li v-for="(item,index) in follower" :key="index" class="people-list-item">
-                                                        <el-avatar class="people-header-img" :size="50" :src="item.noticerImageUrl"></el-avatar>
+                                                        <el-avatar @click.native="goToUser(item.noticerId)" class="people-header-img" :size="50" :src="item.noticerImageUrl"></el-avatar>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -97,7 +97,7 @@
                                                 </div>
                                                 <ul class="people-list">
                                                     <li v-for="(item,index) in fans" :key="index" class="people-list-item">
-                                                        <el-avatar class="people-header-img" :size="50" :src="item.followerImageUrl"></el-avatar>
+                                                        <el-avatar @click.native="goToUser(item.followerId)"  class="people-header-img" :size="50" :src="item.followerImageUrl"></el-avatar>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -232,6 +232,14 @@ export default {
         goToArticle(id){
             this.$router.push('/article/'+id)
         },
+        goToUser(id){
+            this.$router.push({
+                name:'User',
+                params:{
+                    id: id
+                }
+            })
+        },
         handlePrevClick(){
             if(this.currentPage >0 && this.currentPage<this.totalPage){
                 this.currentPage -=1
@@ -260,6 +268,16 @@ export default {
         this.getArticle()
         this.getFans()
         this.getFollower()
+    },
+    watch:{
+        $route:function(to, from){
+            if(to.path !== from.path){
+                this.getInformation()
+                this.getArticle()
+                this.getFans()
+                this.getFollower()
+            }
+        }
     }
 }   
 </script>

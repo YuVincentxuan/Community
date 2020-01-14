@@ -2,7 +2,9 @@
   <div id="app">
     <my-header></my-header>
     <keep-alive>
+      <!-- <router-view :key="$route.fullPath"/> -->
       <router-view/>
+
     </keep-alive>
   </div>
 </template>
