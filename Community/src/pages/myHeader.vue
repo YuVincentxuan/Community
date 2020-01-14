@@ -17,7 +17,7 @@
                 </el-col>
                 <el-col :xs="6" :sm="6" :md="8" :lg="7" class="rightNav">
                     <div>
-                        <router-link to="/write">
+                        <router-link to="/write/new">
                             <el-button class="follow-btn" size="mini" type="success">写博客</el-button>
                         </router-link>
                     </div>

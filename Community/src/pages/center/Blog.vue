@@ -19,7 +19,7 @@
                             <div>
                                 <!-- <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.header"></el-avatar> -->
                                 <div class="author-info">
-                                    <span @click="goToArticle(item.articleId)" class="title">{{item.titile}}</span>
+                                    <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
                                     <span class="author-time">
                                             <el-tag
                                              v-for="tag in item.tags"
@@ -226,10 +226,14 @@ export default {
             });
         },
         edit(id){
-
+            this.$router.push('/write/'+id)
         },
         getUserArticles(){
-            axios.get('http://blog.swpuiot.com/user/articles?pageNum='+this.pageNum+'&rows='+this.rows)
+            axios.get('http://blog.swpuiot.com/user/articles?pageNum='+this.pageNum+'&rows='+this.rows,{
+                headers:{
+                  'Authorization':'test'  
+                }
+            })
             .then(this.getUserArticlesSucc)
         },
         getUserArticlesSucc(res){

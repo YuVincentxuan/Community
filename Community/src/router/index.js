@@ -55,7 +55,7 @@ export default new Router({
       component:Article
     },
     {
-      path:'/write',
+      path:'/write/:articleId',
       name:'Write',
       component:Write
     },
