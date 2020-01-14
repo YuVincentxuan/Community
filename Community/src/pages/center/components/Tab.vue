@@ -27,19 +27,19 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="18">
                     <ul class="info-list">
                         <li class="info-list-item">    
-                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>签名</span>{{userList.information}}
+                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>信息</span>{{information}}
                         </li>
                         <li class="info-list-item">    
-                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{userList.userBirth}}
+                            <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{birthday}}
                         </li>
                         <li class="info-list-item">
-                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>电话</span>{{userList.telNumber}}
+                            <span class="info-title"><i class="iconfont el-icon-star-on"></i>电话</span>{{telNumber}}
                         </li>
                         <li class="info-list-item">  
-                            <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>工作</span>{{userList.job}}
+                            <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>签名</span>{{signature}}
                         </li>
                         <li class="info-list-item">  
-                            <span class="info-title"> <i class="iconfont el-icon-s-promotion"></i>邮箱</span>{{userList.email}}
+                            <span class="info-title"> <i class="iconfont el-icon-s-promotion"></i>邮箱</span>{{email}}
                         </li>
                     </ul>
                 </el-col>
@@ -96,28 +96,28 @@
                                 <el-input v-model="userName" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>
                             <li class="info-list-item">
-                                <span class="list-title">签名</span>
-                                <el-input v-model="userSign" class="my-Info-input" placeholder="请输入内容"></el-input>
+                                <span class="list-title">信息</span>
+                                <el-input v-model="information" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>                            
                             <li class="info-list-item">
                                 <span class="list-title">生日</span>
                                     <el-date-picker
-                                        v-model="userBirth"
+                                        v-model="birthday"
                                         type="date"
                                         placeholder="选择日期">
                                     </el-date-picker>
                             </li>
                             <li class="info-list-item">
                                 <span class="list-title">电话</span>
-                                <el-input v-model="userHobby" class="my-Info-input" placeholder="请输入内容"></el-input>
+                                <el-input v-model="telNumber" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>
                             <li class="info-list-item">
-                                <span class="list-title">工作</span>
-                                <el-input v-model="userJob" class="my-Info-input" placeholder="请输入内容"></el-input>
+                                <span class="list-title">签名</span>
+                                <el-input v-model="signature" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>
                             <li class="info-list-item">
                                 <span class="list-title">邮箱</span>
-                                <el-input v-model="userEmail" class="my-Info-input" placeholder="请输入内容"></el-input>
+                                <el-input v-model="email" class="my-Info-input" placeholder="请输入内容"></el-input>
                             </li>
                     
                         </ul>
@@ -145,12 +145,13 @@ export default {
             myInfoShow:true,
             headimg:'',
             userName:'',
-            userSign:'',
-            userBirth:'',
+            signature:'',
+            birthday:'',
             userHobby:'',
             telNumber:'',
-            userEmail:'',
-            userJob:'',
+            email:'',
+            job:'',
+            information:'',
             followingNumber:0,
             followedNumber:0,
             follower:[],
@@ -165,10 +166,15 @@ export default {
         changeInfo(){
             let params = new URLSearchParams();
             params.append('userName',this.userName)
-            params.append('signature',this.userSign)
-            params.append('birthday',this.userBirth)
-            params.append('email',this.userEmail)
-            axios.post('http://blog.swpuiot.com/editData',params)
+            params.append('signature',this.signature)
+            params.append('birthday',this.birthday)
+            params.append('email',this.email)
+            params.append('information',this.information)
+            axios.post('http://blog.swpuiot.com/editData',params,{
+                headers:{
+                  'Authorization':'test'  
+                }
+            })
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -236,6 +242,11 @@ export default {
             res = res.data
             if(res.code == 200){
                 this.userList = res
+                this.information = res.information
+                this.birthday = res.birthday
+                this.telNumber = res.telNumber
+                this.email = res.email
+                this.job = res.job
             }
         }
     },
@@ -268,7 +279,7 @@ export default {
         this.styles.backgroundImage = 'url('+newValue.headimg+')'
         this.userName = newValue.username
         this.userSign = newValue.userSign
-        this.userBirth = newValue.userBirth
+        this.birthday = newValue.birthday
         this.telNumber = newValue.telNumber
         this.userJob = newValue.job
         this.userEmail = newValue.email
