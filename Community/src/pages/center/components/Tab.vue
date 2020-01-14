@@ -26,19 +26,19 @@
             <el-row :gutter="10">
                 <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="18">
                     <ul class="info-list">
-                        <li class="info-list-item" v-if="userList.information">    
+                        <li class="info-list-item">    
                             <span class="info-title"><i class="iconfont el-icon-user-solid"></i>签名</span>{{userList.information}}
                         </li>
-                        <li class="info-list-item" v-if="userList.userBirth">    
+                        <li class="info-list-item">    
                             <span class="info-title"><i class="iconfont el-icon-user-solid"></i>生日</span>{{userList.userBirth}}
                         </li>
-                        <li class="info-list-item"  v-if="userList.telNumber">
+                        <li class="info-list-item">
                             <span class="info-title"><i class="iconfont el-icon-star-on"></i>电话</span>{{userList.telNumber}}
                         </li>
-                        <li class="info-list-item"  v-if="userList.job">  
+                        <li class="info-list-item">  
                             <span class="info-title"> <i class="iconfont el-icon-s-cooperation"></i>工作</span>{{userList.job}}
                         </li>
-                        <li class="info-list-item"  v-if="userList.email">  
+                        <li class="info-list-item">  
                             <span class="info-title"> <i class="iconfont el-icon-s-promotion"></i>邮箱</span>{{userList.email}}
                         </li>
                     </ul>
@@ -50,7 +50,7 @@
                             <span class="my-data-num">{{userList.articleNumber}}</span>
                         </li>
                         <li class="my-data-item">
-                            <h4 class="my-data-title">问答</h4>
+                            <h4 class="my-data-title">提问</h4>
                             <span class="my-data-num">{{userList.questionNumber}}</span>
                         </li>
                         <li class="my-data-item">
@@ -65,10 +65,10 @@
                     <div class="my-follow">
                         <div class="my-follow-header">
                             <h4>我的关注</h4>
-                            <span>14</span>
+                            <span>{{followingNumber}}</span>
                         </div>
                         <div class="people-list">
-                            <el-avatar @click="goToUser(id)"  class="people-header-img" title="yuwenx"  :size="50" src="https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg"></el-avatar>
+                            <el-avatar v-for="(item, index) in follower" :key="index" @click.native="goToUser(item.noticerId)"  class="people-header-img"  :size="50" :src="item.noticerImageUrl"></el-avatar>
                         </div>
                     </div>
                 </el-col>
@@ -76,10 +76,10 @@
                     <div class="my-follow">
                         <div class="my-follow-header">
                             <h4>我的粉丝</h4>
-                            <span>14</span>
+                            <span>{{followedNumber}}</span>
                         </div>
                         <div class="people-list">
-                            <el-avatar class="people-header-img" :size="50" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+                            <el-avatar v-for="(item, index) in fans" :key="index" class="people-header-img" :size="50" @click.native="goToUser(item.followerId)" :src="item.followerImageUrl"></el-avatar>
                         </div>
                     </div>
                 </el-col>
@@ -138,12 +138,9 @@ export default {
     components:{
         UploadImage
     },
-    props:{
-        userList:Object
-    },
     data(){
         return{
-            List:{},
+            userList:{},
             dialogVisible:false,
             myInfoShow:true,
             headimg:'',
@@ -154,6 +151,10 @@ export default {
             telNumber:'',
             userEmail:'',
             userJob:'',
+            followingNumber:0,
+            followedNumber:0,
+            follower:[],
+            fans:[],
             bgImg:'https://ae01.alicdn.com/kf/Hdd856ae4c81545d2b51fa0c209f7aa28Z.jpg',
             styles:{
                 backgroundImage:''
@@ -194,6 +195,48 @@ export default {
                     this.dialogVisible = false;
                 }
             })
+        }, 
+        getFans(){
+            axios.get('http://blog.swpuiot.com/fans?rows=6&pageNum=1',{
+                headers:{
+                  'Authorization':'test'  
+                }
+            })
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.followedNumber = res.FollowedNumber
+                    this.fans = res.data
+                }
+            })
+        },
+        getFollower(){
+            axios.get('http://blog.swpuiot.com/getAttention?rows=6&pageNum=1',{
+                headers:{
+                  'Authorization':'test'  
+                }
+            })
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.follower = res.data
+                    this.followingNumber = res.FollowingNumber
+                }
+            })
+        },
+        user(){
+            axios.get('http://blog.swpuiot.com/user/information',{
+                headers:{
+                  'Authorization':'test'  
+                }
+            })
+            .then(this.userSucc)
+        },
+        userSucc(res){
+            res = res.data
+            if(res.code == 200){
+                this.userList = res
+            }
         }
     },
     computed:{
@@ -213,6 +256,9 @@ export default {
         }
     },
     mounted() {
+        this.getFans()
+        this.getFollower()
+        this.user()
     //    let _this=this;
     //    let userList = {...this._props}
         // console.log(this.userList)

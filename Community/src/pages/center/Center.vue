@@ -6,7 +6,7 @@
                     <center-header></center-header>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="20" :lg="20" :xl="20">
-                    <center-tab :userList=list></center-tab>
+                    <center-tab ></center-tab>
                 </el-col>
             </el-row>
         </div>
@@ -18,29 +18,9 @@ import CenterHeader from './components/CenterHeader'
 import CenterTab from './components/Tab'
 export default {
     name:'Center',
-    data(){
-        return{
-              list:{}
-        }
-    },
     components:{
         CenterHeader,
         CenterTab
-    },
-    methods:{
-        user(){
-            axios.get('http://blog.swpuiot.com/user')
-            .then(this.userSucc)
-        },
-        userSucc(res){
-            res = res.data
-            if(res.code == 200){
-                this.list = res.data
-            }
-        }
-    },
-    mounted(){
-        this.user()
     }
 }
 </script>
