@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-wechat-title="headTitle">
     <div class="content">
         <div class="left-nav">
             <ul class="nav-list">
@@ -48,7 +48,7 @@
                         <div style="margin: 10px 0">
                             <span style="color:#000">标签:</span>
                              <el-tag v-for="(tag,i) in tags" :key="i"
-                                style="cursor:pointer"
+                                style="cursor:pointer;margin-right:5px"
                                 size="mini"
                                 type=""
                                 effect="dark"
@@ -94,7 +94,7 @@
                             <div v-else class="rt-box-body">
                                 <ul class="ex-list" >
                                     <li v-for="(articles,index) in articleList"
-                                    :key="index" @click="goToArticle(articles.articleId)"  :title="'作者:'+articles.author" class="ex-item">
+                                    :key="index" @click="goToArticle(articles.articleId,articles.title)"  :title="'作者:'+articles.author" class="ex-item">
                                         {{articles.title}}
                                     </li>
                                 </ul>
@@ -117,8 +117,10 @@ import ArticleLoader from '../../pages/loader/ArticleLoader'
 import InforLoader from '../../pages/loader/InforLoader'
 import ListLoader from '../../pages/loader/ListLoader'
 import myFooter from '../myFooter'
+import goToRouter from '@/mixin/goToRouter'
 export default {
     name:'Article',
+    mixins:[goToRouter],
     components:{
         ArticleComment,
         ArticleLoader,
@@ -131,6 +133,7 @@ export default {
            content:`
                `,
             comment:[],
+            headTitle:'',
             title:'',
             read:'',
             date:'',
@@ -163,6 +166,7 @@ export default {
             if(res)
             {   
                 this.title = res.title
+                this.headTitle = res.title
                 this.authorName = res.authorName
                 this.author = res.author
                 this.headImg = res.headimg
@@ -206,7 +210,7 @@ export default {
         //     })
         // },
         followBtn(){
-            axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author+'')
+            axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author)
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -218,35 +222,38 @@ export default {
         addLike(){
             this.isNotLiked = !this.isNotLiked
         },
-        goToLabel(label){
-            this.$router.push({
-                name:'Label',
-                params:{
-                    label: label
-                }
-            })
-        },
-        goToArticle(id){
-            this.$router.push({
-                name: 'Article',
-                params:{
-                    id : id
-                }
-            })
-        },
-        goToUser(id){
-            this.$router.push({
-                name:'User',
-                params:{
-                    id: id
-                }
-            })
-        },
+        // goToLabel(label){
+        //     this.$router.push({
+        //         name:'Label',
+        //         params:{
+        //             label: label
+        //         }
+        //     })
+        // },
+        // goToArticle(id, title){
+        //     this.$router.push({
+        //         name: 'Article',
+        //         params:{
+        //             id : id,
+        //             title: title
+        //         }
+        //     })
+        // },
+        // goToUser(id,title){
+        // this.$router.push({
+        //         name:'User',
+        //         params:{
+        //             id: id,
+        //             title: title
+        //         }
+        //     })
+        // },
     },
     mounted(){
         this.readPassage()
         this.getInformation()
         // this.getComment()
+
     },
     activated() {
         this.isArticleLoading = true
@@ -326,6 +333,9 @@ export default {
         .article-show
             width 100%
             border-bottom 1px solid rgba(178,186,194,.15)
+            @media screen and (max-width: 1200px) {
+                padding 0 5px
+            }
             .author-title
                 padding 10px
                 .header-img

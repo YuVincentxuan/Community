@@ -73,38 +73,39 @@ export default {
       return {
         identifyPage:1,
         pageNum:1,
-        tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            id: '1518',
-            reason: '上海沙市普',
-            statu:'已通过'
-        }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            id: '1518',
-            statu:'',
-            reason: '上海市普陀区金沙上海上海市普陀区金沙市普陀区金沙市普陀区金沙上海市普陀区金沙'
-        }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            id: '1518',
-            statu:'',
-            reason: '上海市普上海市普陀区金沙陀区'
-        }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            id: '1518',
-            reason: '上海市普上海市普陀区金沙陀区金',
-            statu:'已拒绝'
-        }],
+        tableData:[],
+        // tableData: [{
+        //     date: '2016-05-02',
+        //     name: '王小虎',
+        //     id: '1518',
+        //     reason: '上海沙市普',
+        //     statu:'已通过'
+        // }, {
+        //     date: '2016-05-04',
+        //     name: '王小虎',
+        //     id: '1518',
+        //     statu:'',
+        //     reason: '上海市普陀区金沙上海上海市普陀区金沙市普陀区金沙市普陀区金沙上海市普陀区金沙'
+        // }, {
+        //     date: '2016-05-01',
+        //     name: '王小虎',
+        //     id: '1518',
+        //     statu:'',
+        //     reason: '上海市普上海市普陀区金沙陀区'
+        // }, {
+        //     date: '2016-05-03',
+        //     name: '王小虎',
+        //     id: '1518',
+        //     reason: '上海市普上海市普陀区金沙陀区金',
+        //     statu:'已拒绝'
+        // }],
         search: '',
         // tableData:[]
       }
     },
     methods: {
         getUserApply(){
-            axios.get('http://blog.swpuiot.com/getUserApply?pageNum='+this.identifyPage+'&rows=10')
+            axios.get('http://blog.swpuiot.com/getUserApply?pageNum='+this.identifyPage+'&rows=5')
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -116,7 +117,6 @@ export default {
         handleConfirm(index, row,result) {
             let id = result.ID
             axios.get('http://blog.swpuiot.com/setUserApplySuccessful?array=0&confirm='+result+'&id='+id+'')
-            console.log(index, row);
             row.statu = result
         },
         identify_goToPage(data){
@@ -132,7 +132,9 @@ export default {
             }
         }
     },
-        
+    mounted(){
+        this.getUserApply()
+    }
 }
 </script>
 <style>

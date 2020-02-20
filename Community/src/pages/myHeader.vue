@@ -98,6 +98,8 @@ export default {
                 this.isLogin = true
                 this.$store.commit('change_myHeaderImg', res.headimg)
                 this.$store.commit('change_myName', res.userName)
+                this.$store.commit('isLogin',100)
+                sessionStorage.setItem('token',res.userName)
             }
         })
       }

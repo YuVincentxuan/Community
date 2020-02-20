@@ -3,7 +3,16 @@
         <el-card class="box-card">
             <div slot="header" class="clearfix">
                 <span>首页幻灯展示</span>
-                <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+                <div style="float: right; padding: 3px 0">
+                <el-select  v-model="directionId" @change="getDirectionIamge(directionId)" placeholder="请选择方向">
+                    <el-option label="前端" value="1"></el-option>
+                    <el-option label="后端" value="2"></el-option>
+                    <el-option label="嵌入式" value="3"></el-option>  
+                    <el-option label="安卓" value="4"></el-option>                        
+                </el-select>
+                <el-button style="margin-left:5px" type="danger" @click="setDirectionImage(directionId)">保存</el-button>
+
+                </div>
             </div>
             <div class="block" >
                 <el-carousel trigger="click">
@@ -21,18 +30,14 @@
                             :src="item"
                         >
                         </el-image>  
-                    
                     </el-carousel-item>
                 </el-carousel>
-
-                
-        
-            
             </div>
         </el-card>
     </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
     name:'AdminSetting',
     data() {
@@ -43,13 +48,16 @@ export default {
         activeIndex: 0,
         item:'',
         dataUrl:'',
-        image:[
-            'https://ae01.alicdn.com/kf/Hc5db71654f844faa91db3e28fd83dfc7W.jpg',
-            'https://pic.superbed.cn/item/5d9b3400451253d178f23d10.jpg',
-            'https://pic.superbed.cn/item/5d9aeff7451253d178e9bca2.jpg',
-            'https://ae01.alicdn.com/kf/H50c11d0a714c45019af061be843ddebdm.jpg'
-        ],
-        uploadImg:''
+        directionId:'',
+        image:[],
+        // image:[
+        //     'https://ae01.alicdn.com/kf/Hc5db71654f844faa91db3e28fd83dfc7W.jpg',
+        //     'https://pic.superbed.cn/item/5d9b3400451253d178f23d10.jpg',
+        //     'https://pic.superbed.cn/item/5d9aeff7451253d178e9bca2.jpg',
+        //     'https://ae01.alicdn.com/kf/H50c11d0a714c45019af061be843ddebdm.jpg'
+        // ],
+        uploadImg:'',
+        articleUrl:[]
       }
     },
     props: {
@@ -70,16 +78,50 @@ export default {
             this.image[index] = windowURL.createObjectURL(file);
             var img = document.getElementsByClassName('image');
             img[index].getElementsByTagName('img')[0].src = windowURL.createObjectURL(file)
-            console.log(img[index].getElementsByTagName('img'))
             reader.readAsDataURL(file);//读取图像文件 result 为 DataURL, DataURL 可直接 赋值给 img.src
+            let _this = this
             reader.onload = function(event){
                 let base64 = event.target.result;//base64
+                _this.image[index] = base64
             }
-        }  
-    }
-//     mounted () {
-//         this.numberGrow(this.$refs.numberGrow)
-//   }
+        },
+        getDirectionIamge(id){
+            axios.get('http://blog.swpuiot.com/getDirectionImageByAdmin?directionId='+id)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    let _this = this
+                    res.data.forEach(function(item, index){
+                        _this.image[index] = item.imageUrl
+                        _this.articleUrl[index] = item.articleUrl
+                    })
+                    // for(let i=0; i<res.data.length; i++){
+                    //     this.image[i] = res.data[i].imageUrl
+                    //     this.articleUrl[i] = res.data[i].articleUrl
+                    // }
+                }
+            })
+        },
+        setDirectionImage(id){
+            let params = new URLSearchParams();
+            params.append('images',this.image)
+            params.append('directionId',id),
+            params.append('articleUrl',this.articleUrl)
+            axios.post('http://blog.swpuiot.com/setDirectionImageByAdmin',params)
+            .then(res => {
+                res = res.data
+                if(res.code == 200){
+                    this.$message({
+                        type:'success',
+                        message:'banner上传成功'
+                    })
+                }
+            })
+        }
+    },
+    mounted () {
+        this.getDirectionIamge(1)
+  }
 }
 </script>
 <style lang="stylus" scoped>

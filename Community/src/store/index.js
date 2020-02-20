@@ -9,6 +9,7 @@ export default new Vuex.Store({
         myHeaderImg:'',
         myId:'',
         headerNav:'/',
+        isLogin: 0
     },
     mutations:{
         change_headerNav(state, headerNav){
@@ -19,6 +20,9 @@ export default new Vuex.Store({
         },
         change_myName(state, myName){
             state.myName = myName
+        },
+        changeLogin(state, isLogin){
+            state.isLogin = isLogin;
         }
     }
 })

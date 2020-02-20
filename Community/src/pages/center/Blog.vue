@@ -51,6 +51,7 @@
                         @prev-click="handlePrevClick"
                         @next-click="handleNextClick"
                         layout="prev, pager, next"
+                        :page-size="this.rows"
                         :total="this.totalSize">
                     </el-pagination>
                     </div>
@@ -69,8 +70,9 @@ export default {
     },
      data(){
         return{
-            rows:10,
+            rows:5,
             pageNum:1,
+            currentPage:1,
             totalSize:0,
             searchInput:'',
             activeName:0,
@@ -206,7 +208,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                axios.get('http://blog.swpuiot.com/deleArticle?articleId='+id+'')
+                axios.get('http://blog.swpuiot.com/deleArticle?articleId='+id)
                 .then(res => {
                     res = res.data
                     if(res.code == 200){
@@ -229,17 +231,12 @@ export default {
             this.$router.push('/write/'+id)
         },
         getUserArticles(){
-            axios.get('http://blog.swpuiot.com/user/articles?pageNum='+this.pageNum+'&rows='+this.rows,{
-                headers:{
-                  'Authorization':'test'  
-                }
-            })
+            axios.get('http://blog.swpuiot.com/user/articles?pageNum='+this.currentPage+'&rows='+this.rows)
             .then(this.getUserArticlesSucc)
         },
         getUserArticlesSucc(res){
             res = res.data
             if(res.code == 200){
-                console.log(res)
                 this.articles = res.data
                 this.totalSize = res.totalSize
             }
@@ -250,18 +247,18 @@ export default {
         handlePrevClick(){
             if(this.currentPage >0 && this.currentPage<this.totalPage){
                 this.currentPage -=1
-                this.getArticle()
+                this.getUserArticles()
             }
         },
         handleNextClick(){
             if(this.currentPage >0 && this.currentPage<this.totalPage){
                 this.currentPage +=1
-                this.getArticle()
+                this.getUserArticles()
             }
         },
         handleCurrentChange(val){
             this.currentPage = val
-            this.getArticle()
+            this.getUserArticles()
         }
     },
     mounted(){
@@ -330,10 +327,9 @@ export default {
             .btn-box
                 position relative
                 float right
-                top -50px
+                top -60px
         .author-info
             display inline-block
-            margin-left 5px
             width 60%
             height 50px
             line-height 25px

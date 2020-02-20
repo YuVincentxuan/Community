@@ -241,7 +241,9 @@ export default {
             this.$nextTick()
         },
         sendComment(){
-            if(!this.replyComment){
+             if(!this.$store.state.isLogin){
+                this.$router.push('/login')
+            }else if(!this.replyComment){
                  this.$message({
                     showClose: true,
                     type:'warning',
@@ -339,6 +341,9 @@ export default {
         }
     },
     mounted(){
+        this.getComment()
+    },
+    activated(){
         this.getComment()
     }
 }

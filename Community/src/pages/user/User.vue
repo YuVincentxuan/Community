@@ -10,8 +10,8 @@
                             </div>
                             <span class="my-name">{{userName}}</span>
                             <div class="btn-box">
-                                <el-button :size="_size" v-if="this.flag == 0" @click="followBtn" plain>+关注</el-button>
-                                 <el-button :size="_size" v-else @click="followBtn" plain>取消关注</el-button>
+                                <el-button  v-if="this.flag == 0" @click="followBtn" plain>+关注</el-button>
+                                 <el-button  v-else @click="followBtn" plain>取消关注</el-button>
                             </div>
                         </div>
                         <div class="user-info">
@@ -38,7 +38,7 @@
                                                         <el-avatar class="header-img" :size="50" :src="item.header"></el-avatar>
                                                     </router-link> -->
                                                     <div class="author-info">
-                                                    <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
+                                                    <span @click="goToArticle(item.articleId,item.title)" class="title">{{item.title}}</span>
                                                     <div class="author-time">
                                                         <el-tag 
                                                             v-for="tag in item.tags"
@@ -115,12 +115,15 @@
 </template>
 <script>
 import axios from 'axios'
+import goToRouter from '@/mixin/goToRouter'
 export default {
     name:'User',
+    mixins:[goToRouter],
     data(){
         return{
             totalSize:'',
             currentPage:1,
+            headTitle:'',
             totalPage:'',
             activeName:'first',
             answerNumber:'',
@@ -220,7 +223,7 @@ export default {
             })
         },
         followBtn(){
-            axios.get('http://blog.swpuiot.com/attention?noticerId='+this.author+'')
+            axios.get('http://blog.swpuiot.com/attention?noticerId='+this.$route.params.id)
             .then(res => {
                 res = res.data
                 if(res.code == 200){
@@ -229,17 +232,23 @@ export default {
             })
             // this.flag = this.flag == 0 ? 1 : 0
         },
-        goToArticle(id){
-            this.$router.push('/article/'+id)
-        },
-        goToUser(id){
-            this.$router.push({
-                name:'User',
-                params:{
-                    id: id
-                }
-            })
-        },
+        // goToArticle(id, title){
+        //     this.$router.push({
+        //         name: 'Article',
+        //         params:{
+        //             id : id,
+        //             title: title
+        //         }
+        //     })
+        // },
+        // goToUser(id){
+        //     this.$router.push({
+        //         name:'User',
+        //         params:{
+        //             id: id
+        //         }
+        //     })
+        // },
         handlePrevClick(){
             if(this.currentPage >0 && this.currentPage<this.totalPage){
                 this.currentPage -=1
@@ -443,6 +452,9 @@ export default {
                     line-height 70px
                     float right
                     font-size 14px
+            .people-list-item
+                display inline-block
+                margin 5px 5px
 @media screen and (max-width: 1200px) {
     .content >>> .el-pager li{
         margin 0 !important

@@ -179,7 +179,6 @@ export default {
             });
         },
         increase(){
-                console.log(this.percentage)
                 this.percentage1 == this.aimGoal1 ? null : this.percentage1 += this.aimGoal1
                 this.percentage2 == this.aimGoal2 ? null : this.percentage2 += this.aimGoal2
         }

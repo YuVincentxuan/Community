@@ -40,7 +40,7 @@
                         <div>
                             <el-avatar @click.native="goToUser(item.authorId)" class="header-img" :size="50" :src="item.headimg"></el-avatar>
                             <div class="author-info">
-                            <span @click="goToArticle(item.articleId)" class="title">{{item.title}}</span>
+                            <span @click="goToArticle(item.articleId,item.title)" class="title">{{item.title}}</span>
                             <span class="author-time">
                                     <el-tag
                                         class="article-tag"
@@ -140,7 +140,7 @@
                         <list-loader v-if="isExpLoading"></list-loader>
                         <ul v-else class="ex-list" >
                             <li v-for="(articles,index) in experienceArticles"
-                            :key="index" @click="goToArticle(articles.articleId)"  :title="'作者:'+articles.author" class="ex-item">
+                            :key="index" @click="goToArticle(articles.articleId,articles.title)"  :title="'作者:'+articles.author" class="ex-item">
                                 {{articles.title}}
                             </li>
                         </ul>
@@ -155,8 +155,11 @@
 import axios from 'axios'
 import ArticleLoader from '../../../pages/loader/ArticleLoader'
 import ListLoader from '../../../pages/loader/ListLoader'
+import goToRouter from '@/mixin/goToRouter'
+
 export default {
     name:'HomeArticle',
+    mixins:[goToRouter],
     components:{
         ArticleLoader,
         ListLoader
@@ -308,6 +311,7 @@ export default {
             {
                 this.articles = []
                 this.isArticleLoading = true
+                this.allPageNum = 1
             }
             this.allOrHot = 'all'
             let params = new URLSearchParams();
@@ -334,6 +338,7 @@ export default {
             if(tag == 0) {
                 this.articles = []
                 this.isArticleLoading = true
+                this.hotPageNum = 1
             }
             this.allOrHot = 'hot'
             let params = new URLSearchParams();
@@ -429,14 +434,16 @@ export default {
                 this.searchArticles()
             }
         },
-        goToArticle(id){
-            this.$router.push({
-                name: 'Article',
-                params:{
-                    id : id
-                }
-            })
-        },
+        // goToArticle(id, title){
+        //     let router = this.$router.resolve({
+        //         name: 'Article',
+        //         params:{
+        //             id : id,
+        //             title: title
+        //         }
+        //     })
+        //     window.open(router.href, '_blank')
+        // },
         goToDirection(tags){
             let direction = '';
             switch(tags){
@@ -462,22 +469,25 @@ export default {
                 }
             })
         },
-        goToLabel(label){
-            this.$router.push({
-                name:'Label',
-                params:{
-                    label: label
-                }
-            })
-        },
-        goToUser(id){
-            this.$router.push({
-                name:'User',
-                params:{
-                    id: id
-                }
-            })
-        },
+        // goToLabel(label){
+        //     this.$router.push({
+        //         name:'Label',
+        //         params:{
+        //             label: label
+        //         }
+        //     })
+        // },
+        // goToUser(id){
+        //     this.$router.push({
+        //         name:'User',
+        //         params:{
+        //             id: id
+        //         }
+        //     })
+        // },
+        changeUrl(){
+            debounce(this.all_goToPage(1), 3000)
+        }
     },
     mounted(){
         this.getListArticles()
@@ -529,12 +539,22 @@ export default {
                 color black
                 font-size 20px
                 margin 0 !important
+                overflow hidden
+                white-space nowrap
+                text-overflow ellipsis
                 @media screen and (max-width: 1200px) {
                     font-size 16px
                     margin 0
                 }
             .card-text
-                margin-top 5px 
+                position relative
+                float right
+                top -25px
+                @media screen and (max-width: 1200px) {
+                    float none 
+                    top 0
+                    margin-left 55px
+                }
                 .sm-tag
                     font-size 14px
         .author-info
@@ -543,6 +563,9 @@ export default {
             width 60%
             height 50px
             line-height 25px
+            @media screen and (max-width: 1200px) {
+                width 70%
+            }
             >span 
                 display block
                 cursor pointer
@@ -558,7 +581,10 @@ export default {
             .article-tag
                 height 20px
                 line-height 20px
-                margin 0 10px 0 0 
+                margin-right 10px
+                @media screen and (max-width: 1200px) {
+                    margin-right 2px
+                } 
     .more
         margin 10px 0 
         text-align center

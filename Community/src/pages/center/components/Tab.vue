@@ -329,12 +329,13 @@ export default {
             position relative
             display inline-block
             float right
-            top 50%
+            top 60%
             margin 0 20px
             z-index 10
             @media screen and (max-width: 1200px) {
                 position relative
                 width 100%
+                top 35%
                 float none
                 margin 0
                 text-align center
@@ -344,6 +345,7 @@ export default {
         @media screen and (max-width: 1200px) {
             position relative
             top 20px
+            margin 50px 10px
         }
         .info-list
             .info-list-item

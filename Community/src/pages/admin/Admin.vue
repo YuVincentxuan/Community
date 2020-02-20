@@ -65,6 +65,7 @@ import MessageList from './component/messageList'
 export default {
     name:'Admin',
     data() {
+        
       const item = {
         date: '2016-05-02',
         name: '王小虎',

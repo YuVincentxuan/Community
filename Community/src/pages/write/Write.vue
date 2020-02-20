@@ -49,7 +49,7 @@
               <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
                   <el-button @click="dialogFormVisible = false">保存为草稿</el-button>
-                  <el-button type="primary" @click="publishBlog('form')">确 定</el-button>
+                  <el-button type="primary" @click="debounce(publishBlog('form'), 1000)">确 定</el-button>
               </div>
           </el-dialog>
         </div>
@@ -69,8 +69,10 @@
 
 <script>
 import axios from 'axios'
+import ButtonDebounce from '@/mixin/mixin.js'
 export default {
     name:'Write',
+    mixins: [ButtonDebounce],
     data() {
     return {
         value: '',
@@ -153,7 +155,7 @@ export default {
             params.append('directionLabel',this.form.direction)
             params.append('type',this.form.type)
             params.append('attributeLabel',this.dynamicTags)
-            axios.post('http://blog.swpuiot.com/publishBlog',params,{header:{'Authorization':'test'}})
+            axios.post('http://blog.swpuiot.com/publishBlog',params)
             .then(this.publishBlogSucc)
           } else {
             return false;
@@ -165,6 +167,7 @@ export default {
           if(res.code ==  200){
             this.articleId = res.data.articleId
             this.showMkdown=false
+          }else{
           }
       },
       getArticle(){

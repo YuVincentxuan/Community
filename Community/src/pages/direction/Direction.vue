@@ -115,8 +115,10 @@
 import axios from 'axios'
 import ArticleLoader from '../../pages/loader/ArticleLoader'
 import ListLoader from '../../pages/loader/ListLoader'
+import goToRouter from '@/mixin/goToRouter'
 export default {
     name:'Direction',
+    mixins:[goToRouter],
     components:{
         ArticleLoader,
         ListLoader
@@ -356,22 +358,22 @@ export default {
                 }
             })
         },
-        goToUser(id){
-            this.$router.push({
-                name:'User',
-                params:{
-                    id: id
-                }
-            })
-        },
-        goToLabel(label){
-            this.$router.push({
-                name:'Label',
-                params:{
-                    label: label
-                }
-            })
-        },
+        // goToUser(id){
+        //     this.$router.push({
+        //         name:'User',
+        //         params:{
+        //             id: id
+        //         }
+        //     })
+        // },
+        // goToLabel(label){
+        //     this.$router.push({
+        //         name:'Label',
+        //         params:{
+        //             label: label
+        //         }
+        //     })
+        // },
     },
     mounted(){
         // this.getListArticles()
